@@ -82,11 +82,11 @@ export default function MacroChart({
               color: "#E8E8ED",
             }}
             labelStyle={{ color: "#A0A0A8", fontWeight: 600 }}
-            formatter={(value: number | string, name: string) => {
-              const n = typeof value === "number" ? value : parseFloat(value);
-              const label = COUNTRY_MAP[name as CountrySlug]?.name ?? name;
+            formatter={((value: unknown, name: unknown) => {
+              const n = typeof value === "number" ? value : parseFloat(String(value ?? ""));
+              const label = COUNTRY_MAP[name as CountrySlug]?.name ?? String(name ?? "");
               return [Number.isFinite(n) ? formatValue(n, indicator.kind, indicator.decimals) : "—", label];
-            }}
+            }) as never}
           />
           {showPeers &&
             COUNTRIES.filter((c) => c.slug !== active).map((c) => (

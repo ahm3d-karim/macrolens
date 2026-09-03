@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-09-03",
+  "lastUpdated": "2026-07-13",
+  "sources": {
+    "broad-money": {
+      "source": "World Bank WDI",
+      "code": "FM.LBL.BMNY.GD.ZS",
+      "url": "https://data.worldbank.org/indicator/FM.LBL.BMNY.GD.ZS"
+    },
+    "current-account": {
+      "source": "World Bank WDI",
+      "code": "BN.CAB.XOKA.GD.ZS",
+      "url": "https://data.worldbank.org/indicator/BN.CAB.XOKA.GD.ZS"
+    },
+    "exports": {
+      "source": "World Bank WDI",
+      "code": "NE.EXP.GNFS.ZS",
+      "url": "https://data.worldbank.org/indicator/NE.EXP.GNFS.ZS"
+    },
+    "external-debt": {
+      "source": "World Bank WDI",
+      "code": "DT.DOD.DECT.GN.ZS",
+      "url": "https://data.worldbank.org/indicator/DT.DOD.DECT.GN.ZS"
+    },
+    "gdp-growth": {
+      "source": "World Bank WDI",
+      "code": "NY.GDP.MKTP.KD.ZG",
+      "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG"
+    },
+    "gdp-per-capita": {
+      "source": "World Bank WDI",
+      "code": "NY.GDP.PCAP.KD",
+      "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.KD"
+    },
+    "gross-capital-formation": {
+      "source": "World Bank WDI",
+      "code": "NE.GDI.TOTL.ZS",
+      "url": "https://data.worldbank.org/indicator/NE.GDI.TOTL.ZS"
+    },
+    "imports": {
+      "source": "World Bank WDI",
+      "code": "NE.IMP.GNFS.ZS",
+      "url": "https://data.worldbank.org/indicator/NE.IMP.GNFS.ZS"
+    },
+    "inflation": {
+      "source": "World Bank WDI",
+      "code": "FP.CPI.TOTL.ZG",
+      "url": "https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG"
+    },
+    "population": {
+      "source": "World Bank WDI",
+      "code": "SP.POP.TOTL",
+      "url": "https://data.worldbank.org/indicator/SP.POP.TOTL"
+    },
+    "remittances": {
+      "source": "World Bank WDI",
+      "code": "BX.TRF.PWKR.DT.GD.ZS",
+      "url": "https://data.worldbank.org/indicator/BX.TRF.PWKR.DT.GD.ZS"
+    },
+    "reserves-months": {
+      "source": "World Bank WDI",
+      "code": "FI.RES.TOTL.MO",
+      "url": "https://data.worldbank.org/indicator/FI.RES.TOTL.MO"
+    }
+  }
+}

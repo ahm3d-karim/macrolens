@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Macro Lens
 
-## Getting Started
+**Five countries. Four decades. One honest look.**
 
-First, run the development server:
+Macroeconomic data for South Asia — Pakistan, India, Bangladesh, Sri Lanka, Nepal — from primary sources (World Bank WDI, IMF WEO), published as static, finding-first country dossiers. No backend, no database, no aggregators.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Live
+
+https://macrolens.vercel.app
+
+## Stack
+
+- Next.js 16 (App Router) + TypeScript + Tailwind v4 + Recharts
+- 100% static output — data lives as JSON files in `data/`, pages are pre-rendered at build time
+
+## Structure
+
+```
+data/
+  {country}/            pakistan | india | bangladesh | sri-lanka | nepal
+    {indicator}.json    flat [{year, value}] arrays, null for missing years
+  meta.json             generatedAt, lastUpdated, per-indicator sources
+src/
+  app/                  layout, home, [country]/ dossier, methodology
+  components/           CountryToggle, StatCard, ChartCard, MacroChart, DossierView
+  lib/                  countries, indicators, loaders, insights, format, types
+pull.py                 (repo root · copied from macrolens-data) data pipeline
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Refreshing the data
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+python pull.py          # pulls WDI + WEO, rewrites data/ (idempotent)
+npm run test            # strict JSON + series-sanity tests
+npm run build           # regenerates the static site
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The pipeline is intentionally dumb: pull → verify → build. If the APIs are down or a series breaks, tests fail loudly instead of shipping gaps.
 
-## Learn More
+## Chart philosophy
 
-To learn more about Next.js, take a look at the following resources:
+- Chart titles are findings, not variable names ("below the 3-month reserves danger line since 2018", not "Reserves over time").
+- Every chart can overlay all five countries (peers in grey) — same source, same unit, same scale.
+- Missing years render as real gaps; nothing is interpolated.
+- Methodology and limitations are published on the site, not hidden in a README.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- World Bank World Development Indicators (13 series codes — see `src/lib/indicators.ts`)
