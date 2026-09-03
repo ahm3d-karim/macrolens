@@ -10,7 +10,7 @@ export const metadata = {
 export default function MethodologyPage() {
   const meta = loadMeta();
   const updated =
-    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "—";
+    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "n/a";
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pb-20 pt-12">
@@ -29,13 +29,13 @@ export default function MethodologyPage() {
         No third-party aggregators, no curated spin.
       </p>
 
-      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6E6E78]">
+      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
         Indicators & sources
       </h2>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-[#2A2A32] text-left text-[11px] uppercase tracking-wider text-[#6E6E78]">
+            <tr className="border-b border-[#2A2A32] text-left text-[11px] uppercase tracking-wider text-[#8A8A94]">
               <th className="py-2 pr-3 font-semibold">Indicator</th>
               <th className="py-2 pr-3 font-semibold">Unit</th>
               <th className="py-2 pr-3 font-semibold">Series code</th>
@@ -60,7 +60,7 @@ export default function MethodologyPage() {
                     rel="noreferrer"
                     className="text-[#52B788] hover:text-[#6ED49C]"
                   >
-                    {i.source} ↗
+                    {i.source}
                   </a>
                 </td>
               </tr>
@@ -69,20 +69,20 @@ export default function MethodologyPage() {
         </table>
       </div>
 
-      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6E6E78]">
+      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
         Reading the charts
       </h2>
       <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-[#A0A0A8]">
         <li>
           <strong className="text-[#E8E8ED]">The solid line</strong> is the
           country you opened. When &quot;show peers&quot; is on, the other four
-          countries appear in grey for context — same source, same unit, same
+          countries appear in grey for context, same source, same unit, same
           scale.
         </li>
         <li>
           Level series (GDP per capita, reserves) use a linear axis; percent
-          series are shown as reported. Missing years render as gaps — the gap
-          is real, not interpolation.
+          series are shown as reported. Missing years render as real gaps,
+          never interpolation.
         </li>
         <li>
           Chart titles state the finding the data shows, not just what was
@@ -92,7 +92,7 @@ export default function MethodologyPage() {
         </li>
       </ul>
 
-      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6E6E78]">
+      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
         Caveats & limitations
       </h2>
       <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-[#A0A0A8]">
@@ -123,10 +123,10 @@ export default function MethodologyPage() {
         </li>
       </ul>
 
-      <p className="mt-10 rounded-xl border border-[#1A1A20] bg-[#111115] p-4 text-xs leading-relaxed text-[#6E6E78]">
+      <p className="mt-10 rounded-xl border border-[#1A1A20] bg-[#111115] p-4 text-xs leading-relaxed text-[#8A8A94]">
         Last updated from source APIs:{" "}
         <span className="text-[#A0A0A8]">{updated}</span>. The full pipeline and
-        data files are public in the repository — every number on this site can
+        data files are public in the repository. Every number on this site can
         be reproduced by running{" "}
         <code className="font-mono text-xs text-[#6ED49C]">pull.py</code> and
         rebuilding.

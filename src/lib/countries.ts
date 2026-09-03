@@ -19,7 +19,7 @@ export const COUNTRIES: CountryMeta[] = [
     iso3: "IND",
     flag: "🇮🇳",
     color: "#DD8452",
-    blurb: "The regional giant — reform-led growth pulling away from the pack.",
+    blurb: "The regional giant: reform-led growth pulling away from the pack.",
   },
   {
     slug: "bangladesh",
@@ -29,7 +29,7 @@ export const COUNTRIES: CountryMeta[] = [
     iso3: "BGD",
     flag: "🇧🇩",
     color: "#8B5CF6",
-    blurb: "The export machine — overtook Pakistan in GDP per capita.",
+    blurb: "The export machine: it overtook Pakistan in GDP per capita.",
   },
   {
     slug: "sri-lanka",
@@ -39,7 +39,7 @@ export const COUNTRIES: CountryMeta[] = [
     iso3: "LKA",
     flag: "🇱🇰",
     color: "#D4A373",
-    blurb: "The 2022 crisis teardown — what reserve depletion does to a country.",
+    blurb: "The 2022 crisis teardown: what reserve depletion does to a country.",
   },
   {
     slug: "nepal",
@@ -49,7 +49,7 @@ export const COUNTRIES: CountryMeta[] = [
     iso3: "NPL",
     flag: "🇳🇵",
     color: "#E76F51",
-    blurb: "The remittance paradox — a quarter of GDP sent home from abroad.",
+    blurb: "The remittance paradox: a quarter of GDP sent home from abroad.",
   },
 ];
 

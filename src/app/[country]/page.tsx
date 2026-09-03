@@ -22,7 +22,7 @@ export async function generateMetadata({
   const c = COUNTRY_MAP[country];
   return {
     title: `${c.name} macro profile`,
-    description: `${c.blurb} GDP growth, inflation, fiscal balance, reserves, trade and remittances for ${c.name} — from World Bank WDI and IMF WEO data.`,
+    description: `${c.blurb} GDP growth, inflation, investment, debt, reserves, trade and remittances for ${c.name}, from World Bank WDI data.`,
   };
 }
 
@@ -41,7 +41,7 @@ export default async function CountryPage({
 
   const meta = loadMeta();
   const updated =
-    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "—";
+    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "n/a";
 
   return (
     <DossierView

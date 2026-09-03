@@ -14,7 +14,7 @@ export default function CountryToggle() {
           <Link
             key={c.slug}
             href={`/${c.slug}`}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-all ${
+            className={`inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-sm font-medium transition-all ${
               active
                 ? "border-transparent text-[#0A0A0B]"
                 : "border-[#2A2A32] text-[#A0A0A8] hover:border-[#3A3A44] hover:text-[#E8E8ED]"

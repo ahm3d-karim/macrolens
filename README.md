@@ -2,7 +2,7 @@
 
 **Five countries. Four decades. One honest look.**
 
-Macroeconomic data for South Asia — Pakistan, India, Bangladesh, Sri Lanka, Nepal — from primary sources (World Bank WDI, IMF WEO), published as static, finding-first country dossiers. No backend, no database, no aggregators.
+Macroeconomic data for South Asia, Pakistan, India, Bangladesh, Sri Lanka and Nepal, from primary sources (World Bank WDI), published as static, finding-first country dossiers. Purely static: no backend, no database, no aggregators.
 
 ## Live
 
@@ -11,7 +11,7 @@ https://macrolens.vercel.app
 ## Stack
 
 - Next.js 16 (App Router) + TypeScript + Tailwind v4 + Recharts
-- 100% static output — data lives as JSON files in `data/`, pages are pre-rendered at build time
+- 100% static output: data lives as JSON files in `data/`, pages are pre-rendered at build time
 
 ## Structure
 
@@ -39,11 +39,11 @@ The pipeline is intentionally dumb: pull → verify → build. If the APIs are d
 
 ## Chart philosophy
 
-- Chart titles are findings, not variable names ("below the 3-month reserves danger line since 2018", not "Reserves over time").
-- Every chart can overlay all five countries (peers in grey) — same source, same unit, same scale.
+- Chart titles are findings, not variable names ("Back above 3 months, after three years in the danger zone", not "Reserves over time").
+- Every chart can overlay all five countries (peers in grey), same source, same unit, same scale.
 - Missing years render as real gaps; nothing is interpolated.
 - Methodology and limitations are published on the site, not hidden in a README.
 
 ## Sources
 
-- World Bank World Development Indicators (13 series codes — see `src/lib/indicators.ts`)
+- World Bank World Development Indicators (13 series codes, see `src/lib/indicators.ts`)

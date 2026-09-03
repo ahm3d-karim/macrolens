@@ -22,17 +22,20 @@ body {
   background: rgba(82, 183, 136, 0.35);
 }
 
-/* subtle dot grid backdrop */
-.bg-dots {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
+/* brand accent: PID-heritage green gradient, used only on the wordmark
+   and the home headline. Everywhere else the accent is flat #52B788. */
 .gradient-text {
   background: linear-gradient(120deg, #52b788 0%, #6ed49c 60%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* visible keyboard focus everywhere (R-32) */
+:focus-visible {
+  outline: 2px solid #6ed49c;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* thin scrollbar, dark */

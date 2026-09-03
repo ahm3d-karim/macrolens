@@ -39,7 +39,7 @@ function mergeYears(
   });
 }
 
-const TICK_COLORS = { tick: { fill: "#6E6E78", fontSize: 11 } };
+const TICK_COLORS = { tick: { fill: "#8A8A94", fontSize: 11 } };
 
 export default function MacroChart({
   seriesByCountry,
@@ -85,7 +85,7 @@ export default function MacroChart({
             formatter={((value: unknown, name: unknown) => {
               const n = typeof value === "number" ? value : parseFloat(String(value ?? ""));
               const label = COUNTRY_MAP[name as CountrySlug]?.name ?? String(name ?? "");
-              return [Number.isFinite(n) ? formatValue(n, indicator.kind, indicator.decimals) : "—", label];
+              return [Number.isFinite(n) ? formatValue(n, indicator.kind, indicator.decimals) : "n/a", label];
             }) as never}
           />
           {showPeers &&

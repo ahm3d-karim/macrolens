@@ -6,10 +6,10 @@ import { formatValue } from "@/lib/format";
 export default function HomePage() {
   const meta = loadMeta();
   const updated =
-    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "—";
+    typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "n/a";
 
   return (
-    <div className="bg-dots">
+    <div>
       <section className="mx-auto w-full max-w-6xl px-4 pb-10 pt-20">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#52B788]">
           A South Asia macro lens
@@ -20,12 +20,12 @@ export default function HomePage() {
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#A0A0A8]">
           Macroeconomic indicators for Pakistan, India, Bangladesh, Sri Lanka and
-          Nepal — every series pulled straight from primary sources (World Bank
-          WDI), nothing aggregated, nothing spun. Pick a country, read
-          what the data actually says, and flip between neighbours for context.
+          Nepal, every series pulled straight from the original publisher (World
+          Bank WDI). Pick a country, read what the data actually says, and flip
+          between neighbours for context.
         </p>
-        <p className="mt-3 text-xs text-[#6E6E78]">
-          Data refreshed from WB WDI — last updated {updated}
+        <p className="mt-3 text-xs text-[#8A8A94]">
+          Data refreshed from WB WDI, last updated {updated}
         </p>
       </section>
 
@@ -46,7 +46,7 @@ export default function HomePage() {
                 <span className="text-lg font-semibold text-[#E8E8ED]">
                   {c.flag} {c.name}
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E78]">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A94]">
                   {c.code}
                 </span>
               </div>
@@ -55,12 +55,12 @@ export default function HomePage() {
               </p>
               <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-[#1A1A20] pt-3 text-center">
                 {[
-                  { label: "GDP growth", v: growth ? formatValue(growth.value, "pct", 1) : "—" },
-                  { label: "Inflation", v: inflation ? formatValue(inflation.value, "pct", 1) : "—" },
-                  { label: "GDP/capita", v: gdpCap ? formatValue(gdpCap.value, "usd", 0) : "—" },
+                  { label: "GDP growth", v: growth ? formatValue(growth.value, "pct", 1) : "n/a" },
+                  { label: "Inflation", v: inflation ? formatValue(inflation.value, "pct", 1) : "n/a" },
+                  { label: "GDP/capita", v: gdpCap ? formatValue(gdpCap.value, "usd", 0) : "n/a" },
                 ].map((s) => (
                   <div key={s.label}>
-                    <dt className="text-[10px] uppercase tracking-wide text-[#6E6E78]">
+                    <dt className="text-[10px] uppercase tracking-wide text-[#8A8A94]">
                       {s.label}
                     </dt>
                     <dd className="font-mono text-sm font-semibold text-[#E8E8ED]">
@@ -70,7 +70,7 @@ export default function HomePage() {
                 ))}
               </dl>
               {pop && (
-                <p className="mt-2 text-right text-[10px] text-[#6E6E78]">
+                <p className="mt-2 text-right text-[10px] text-[#8A8A94]">
                   {pop.value.toLocaleString("en-US")} people · {pop.year}
                 </p>
               )}
@@ -86,21 +86,21 @@ export default function HomePage() {
             Compare, don't just stare
           </h3>
           <p className="mt-2 text-xs leading-relaxed text-[#A0A0A8]">
-            Every chart on every dossier can show all five countries at once —
-            your country solid, the neighbours in grey. That&apos;s where the
-            stories live: Bangladesh passing Pakistan, Sri Lanka&apos;s reserves
-            collapse, Nepal&apos;s remittance dependence.
+            Every chart on every dossier can show all five countries at once.
+            Your country is drawn solid, the neighbours in grey, and that is
+            where the stories live: Bangladesh passing Pakistan, Sri Lanka&apos;s
+            reserves collapse, Nepal&apos;s remittance dependence.
           </p>
-          <p className="mt-4 text-xs leading-relaxed text-[#6E6E78]">
+          <p className="mt-4 text-xs leading-relaxed text-[#8A8A94]">
             Method & limitations: <a href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">methodology page</a>
           </p>
         </div>
       </section>
 
       <footer className="border-t border-[#1A1A20] py-6">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 text-[11px] text-[#6E6E78] sm:flex-row">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 text-[11px] text-[#8A8A94] sm:flex-row">
           <span>MACROLENS · WB WDI · updated {updated}</span>
-          <span>Source: World Bank · no aggregators, no spin</span>
+          <span>Source: World Bank · every series verifiable upstream</span>
         </div>
       </footer>
     </div>

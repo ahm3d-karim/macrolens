@@ -68,7 +68,7 @@ export default function StatCard({
 
   return (
     <div className="rounded-xl border border-[#1A1A20] bg-[#111115] p-4">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-[#6E6E78]">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8A8A94]">
         {label}
       </div>
       {latest ? (
@@ -83,14 +83,14 @@ export default function StatCard({
                 style={{ color: delta >= 0 ? "#52B788" : "#E76F51" }}
               >
                 {delta >= 0 ? "▲" : "▼"} {Math.abs(delta).toFixed(1)}
-                <span className="text-[#6E6E78]"> vs {compareYears}y ago</span>
+                <span className="text-[#8A8A94]"> vs {compareYears}y ago</span>
               </span>
             )}
           </div>
-          <div className="text-[11px] text-[#6E6E78]">latest: {latest.year}</div>
+          <div className="text-[11px] text-[#8A8A94]">latest: {latest.year}</div>
         </>
       ) : (
-        <div className="mt-2 text-sm text-[#6E6E78]">no data</div>
+        <div className="mt-2 text-sm text-[#8A8A94]">no data</div>
       )}
       <Sparkline points={lastN} color={color} />
     </div>

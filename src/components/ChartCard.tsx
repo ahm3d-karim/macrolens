@@ -8,6 +8,7 @@ interface ChartCardProps {
   showPeers: boolean;
   insightTitle?: string;
   insightNote?: string;
+  height?: number;
 }
 
 export default function ChartCard({
@@ -17,6 +18,7 @@ export default function ChartCard({
   showPeers,
   insightTitle,
   insightNote,
+  height = 280,
 }: ChartCardProps) {
   return (
     <div className="flex flex-col rounded-xl border border-[#1A1A20] bg-[#111115] p-5">
@@ -26,7 +28,7 @@ export default function ChartCard({
       {insightNote ? (
         <p className="mt-1 text-sm leading-relaxed text-[#A0A0A8]">{insightNote}</p>
       ) : (
-        <p className="mt-1 text-sm text-[#6E6E78]">{indicator.unit}</p>
+        <p className="mt-1 text-sm text-[#8A8A94]">{indicator.unit}</p>
       )}
       <div className="mt-3 flex-1">
         <MacroChart
@@ -34,9 +36,10 @@ export default function ChartCard({
           active={active as never}
           indicator={indicator}
           showPeers={showPeers}
+          height={height}
         />
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#1A1A20] pt-2 text-[11px] text-[#6E6E78]">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#1A1A20] pt-2 text-[11px] text-[#8A8A94]">
         <span>
           {indicator.source} · {indicator.code}
         </span>
@@ -46,7 +49,7 @@ export default function ChartCard({
           rel="noreferrer"
           className="text-[#52B788] hover:text-[#6ED49C]"
         >
-          source ↗
+          source
         </a>
       </div>
     </div>

@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Macro Lens — South Asia's macro economy, made comparable",
-    template: "%s — Macro Lens",
+    default: "Macro Lens: South Asia's macro economy, made comparable",
+    template: "%s · Macro Lens",
   },
   description:
-    "Five countries. Four decades. One honest look. Macro indicators for Pakistan, India, Bangladesh, Sri Lanka and Nepal, from primary sources — World Bank WDI.",
+    "Five countries. Four decades. One honest look. Macro indicators for Pakistan, India, Bangladesh, Sri Lanka and Nepal, from primary sources: World Bank WDI.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="text-sm font-black tracking-[0.22em] text-[#E8E8ED]">
                 MACRO<span className="gradient-text">LENS</span>
               </span>
-              <span className="hidden text-[10px] font-medium uppercase tracking-widest text-[#6E6E78] sm:inline">
+              <span className="hidden text-[10px] font-medium uppercase tracking-widest text-[#8A8A94] sm:inline">
                 South Asia
               </span>
             </a>

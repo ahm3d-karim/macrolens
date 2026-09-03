@@ -23,16 +23,22 @@ interface DossierViewProps {
   updated: string;
 }
 
-const SECTIONS: { title: string; indicators: string[] }[] = [
-  { title: "Growth & Output", indicators: ["gdp-growth", "gdp-per-capita"] },
-  { title: "Prices & Money", indicators: ["inflation", "broad-money"] },
+const SECTIONS: { title: string; rows: string[][] }[] = [
+  {
+    title: "Growth & Output",
+    rows: [["gdp-growth"], ["gdp-per-capita"]],
+  },
+  {
+    title: "Prices & Money",
+    rows: [["inflation", "broad-money"]],
+  },
   {
     title: "Investment & Debt",
-    indicators: ["gross-capital-formation", "external-debt"],
+    rows: [["gross-capital-formation", "external-debt"]],
   },
   {
     title: "External Sector",
-    indicators: ["exports", "imports", "current-account", "reserves-months", "remittances"],
+    rows: [["exports", "imports", "current-account"], ["reserves-months", "remittances"]],
   },
 ];
 
@@ -55,7 +61,7 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
 
       <div className="mt-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#6E6E78]">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8A8A94]">
             South Asia macro profile
           </div>
           <h1 className="mt-1 text-4xl font-bold tracking-tight text-[#E8E8ED]">
@@ -63,7 +69,7 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#A0A0A8]">{country.blurb}</p>
           {population && (
-            <p className="mt-2 text-xs text-[#6E6E78]">
+            <p className="mt-2 text-xs text-[#8A8A94]">
               {population.value.toLocaleString("en-US")} people · {population.year}
             </p>
           )}
@@ -102,31 +108,41 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
       {/* Sections */}
       {SECTIONS.map((section) => (
         <section key={section.title} className="mt-10">
-          <h2 className="border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6E6E78]">
+          <h2 className="border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
             {section.title}
           </h2>
-          <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            {section.indicators.map((slug) => {
-              const ind = INDICATOR_MAP[slug];
-              const byCountry = seriesByIndicator[slug] ?? {};
-              const insight = getInsight(country.slug, slug);
+          <div className="mt-4 space-y-4">
+            {section.rows.map((row, rowIndex) => {
+              const cols =
+                row.length === 1 ? "grid-cols-1" : row.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3";
+              const chartHeight = row.length === 1 ? 320 : row.length === 2 ? 280 : 240;
               return (
-                <ChartCard
-                  key={slug}
-                  indicator={ind}
-                  seriesByCountry={byCountry}
-                  active={country.slug}
-                  showPeers={showPeers}
-                  insightTitle={insight?.title}
-                  insightNote={insight?.note}
-                />
+                <div key={rowIndex} className={`grid gap-4 ${cols}`}>
+                  {row.map((slug) => {
+                    const ind = INDICATOR_MAP[slug];
+                    const byCountry = seriesByIndicator[slug] ?? {};
+                    const insight = getInsight(country.slug, slug);
+                    return (
+                      <ChartCard
+                        key={slug}
+                        indicator={ind}
+                        seriesByCountry={byCountry}
+                        active={country.slug}
+                        showPeers={showPeers}
+                        insightTitle={insight?.title}
+                        insightNote={insight?.note}
+                        height={chartHeight}
+                      />
+                    );
+                  })}
+                </div>
               );
             })}
           </div>
         </section>
       ))}
 
-      <footer className="mt-12 border-t border-[#1A1A20] pt-4 text-[11px] text-[#6E6E78]">
+      <footer className="mt-12 border-t border-[#1A1A20] pt-4 text-[11px] text-[#8A8A94]">
         <p>
           Data: World Bank WDI · updated <span className="text-[#A0A0A8]">{updated}</span> ·
           methodology & limitations on the{" "}
