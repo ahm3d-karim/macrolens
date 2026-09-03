@@ -15,7 +15,7 @@ const INSIGHTS: Record<string, Insight> = {
   },
   "india:gdp-growth": {
     title: "The region's growth engine, 7%+ since 2022",
-    note: "India grew 7.2 to 7.6% in 2023 to 2025 while neighbours stagnated; the 2020 shock (−5.8%) was fully erased within two years.",
+    note: "India grew 7.2-7.6% in 2023-2025 while neighbours stagnated; the 2020 shock (−5.8%) was fully erased within two years.",
   },
   "bangladesh:gdp-growth": {
     title: "From 6.6% runner to a 3.5% crawl",
@@ -23,7 +23,7 @@ const INSIGHTS: Record<string, Insight> = {
   },
   "sri-lanka:gdp-growth": {
     title: "Crisis trough to snapback",
-    note: "Growth collapsed to −7.4% in 2022 and rebounded to ~5% in 2024 to 2025, a classic post-crisis recovery from an extremely low base, not a new trend.",
+    note: "Growth collapsed to −7.4% in 2022 and rebounded to ~5% in 2024-2025, a classic post-crisis recovery from an extremely low base, not a new trend.",
   },
   "nepal:gdp-growth": {
     title: "Small, volatile, remittance-steady",
@@ -37,7 +37,7 @@ const INSIGHTS: Record<string, Insight> = {
   },
   "india:gdp-per-capita": {
     title: "Income per person up ~60% in ten years",
-    note: "$1,484 → $2,367 (2014 to 2024) on the back of sustained ~7% growth, the fastest per-capita climb at this scale in South Asia.",
+    note: "$1,484 → $2,367 (2014-2024) on the back of sustained ~7% growth, the fastest per-capita climb at this scale in South Asia.",
   },
   "bangladesh:gdp-per-capita": {
     title: "The overtaking is real, and widening",
@@ -120,8 +120,8 @@ const INSIGHTS: Record<string, Insight> = {
 
   // ── EXTERNAL DEBT ───────────────────────────────────────────────────────
   "pakistan:external-debt": {
-    title: "Hovering at 35 to 40% of GNI, the IMF anchor",
-    note: "External debt is down from 55.9% of GNI (1999) and has hovered around 35 to 40% since 2019, the servicing burden, not the stock, keeps Pakistan chained to IMF programmes.",
+    title: "Hovering at 35-40% of GNI: the IMF anchor",
+    note: "External debt is down from 55.9% of GNI (1999) and has hovered around 35-40% since 2019. The servicing burden, not the stock, keeps Pakistan chained to IMF programmes.",
   },
   "india:external-debt": {
     title: "The most insulated, 18.6% of GNI",
