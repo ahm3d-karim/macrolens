@@ -6,7 +6,7 @@ Macroeconomic data for South Asia, Pakistan, India, Bangladesh, Sri Lanka and Ne
 
 ## Live
 
-https://macrolens.vercel.app
+https://macrolens-pied.vercel.app
 
 ## Stack
 
