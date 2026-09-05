@@ -19,6 +19,7 @@ interface MacroChartProps {
   indicator: IndicatorMeta;
   showPeers: boolean;
   height?: number;
+  variant?: "dossier" | "compare";
 }
 
 function mergeYears(
@@ -47,6 +48,7 @@ export default function MacroChart({
   indicator,
   showPeers,
   height = 280,
+  variant = "dossier",
 }: MacroChartProps) {
   const data = mergeYears(seriesByCountry);
   const activeMeta = COUNTRY_MAP[active];
@@ -88,29 +90,48 @@ export default function MacroChart({
               return [Number.isFinite(n) ? formatValue(n, indicator.kind, indicator.decimals) : "n/a", label];
             }) as never}
           />
-          {showPeers &&
-            COUNTRIES.filter((c) => c.slug !== active).map((c) => (
+          {variant === "compare" ? (
+            COUNTRIES.filter(
+              (c) => (seriesByCountry[c.slug] ?? []).length > 0,
+            ).map((c) => (
               <Line
                 key={c.slug}
                 type="monotone"
                 dataKey={c.slug}
                 stroke={c.color}
-                strokeWidth={1.2}
-                strokeOpacity={0.35}
+                strokeWidth={2.2}
                 dot={false}
                 connectNulls={false}
                 isAnimationActive={false}
               />
-            ))}
-          <Line
-            type="monotone"
-            dataKey={active}
-            stroke={activeMeta.color}
-            strokeWidth={2.6}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-          />
+            ))
+          ) : (
+            <>
+              {showPeers &&
+                COUNTRIES.filter((c) => c.slug !== active).map((c) => (
+                  <Line
+                    key={c.slug}
+                    type="monotone"
+                    dataKey={c.slug}
+                    stroke={c.color}
+                    strokeWidth={1.2}
+                    strokeOpacity={0.35}
+                    dot={false}
+                    connectNulls={false}
+                    isAnimationActive={false}
+                  />
+                ))}
+              <Line
+                type="monotone"
+                dataKey={active}
+                stroke={activeMeta.color}
+                strokeWidth={2.6}
+                dot={false}
+                connectNulls={false}
+                isAnimationActive={false}
+              />
+            </>
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

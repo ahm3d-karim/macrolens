@@ -40,6 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="transition-colors hover:text-[#E8E8ED]">
                 Countries
               </Link>
+              <Link href="/compare" className="transition-colors hover:text-[#E8E8ED]">
+                Compare
+              </Link>
               <Link href="/methodology" className="transition-colors hover:text-[#E8E8ED]">
                 Methodology
               </Link>
