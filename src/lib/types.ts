@@ -25,6 +25,7 @@ export type IndicatorKind =
   | "pct" // percent (e.g. growth, inflation, shares of GDP)
   | "usd" // US dollars (levels)
   | "months" // reserves in months of imports
+  | "rate" // bare level (e.g. LCU per USD): no unit suffix
   | "count"; // population etc.
 
 export interface IndicatorMeta {
@@ -36,4 +37,5 @@ export interface IndicatorMeta {
   source: string;
   sourceUrl: string;
   decimals: number;
+  optional?: boolean; // series may be absent from data/ without failing the build
 }

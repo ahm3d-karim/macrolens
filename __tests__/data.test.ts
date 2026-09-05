@@ -20,6 +20,7 @@ describe("macrolens data files", () => {
     for (const c of COUNTRIES) {
       for (const ind of INDICATORS) {
         const file = path.join(DATA_DIR, c.slug, `${ind.slug}.json`);
+        if (ind.optional && !fs.existsSync(file)) continue;
         expect(fs.existsSync(file), `missing ${file}`).toBe(true);
         const rows = strictParse(file) as { year: number; value: number | null }[];
         expect(Array.isArray(rows)).toBe(true);
@@ -35,6 +36,7 @@ describe("macrolens data files", () => {
       sources: Record<string, unknown>;
     };
     for (const ind of INDICATORS) {
+      if (ind.optional) continue;
       expect(meta.sources[ind.slug], `meta missing ${ind.slug}`).toBeDefined();
     }
   });
@@ -61,16 +63,37 @@ describe("macrolens data files", () => {
     inBand(get("india", "external-debt", 2023), 15, 30, "IN ext debt 2023");
     inBand(get("pakistan", "broad-money", 2024), 30, 60, "PK broad money 2024");
     inBand(get("pakistan", "gross-capital-formation", 2024), 10, 25, "PK GCF 2024");
+    inBand(get("pakistan", "exchange-rate", 2024), 230, 330, "PK FX 2024");
+    inBand(get("india", "exchange-rate", 2024), 60, 120, "IN FX 2024");
+    inBand(get("india", "public-debt", 2023), 70, 95, "IN public debt 2023");
+    inBand(get("sri-lanka", "public-debt", 2023), 95, 125, "LK public debt 2023");
+    inBand(get("pakistan", "real-interest-rate", 2021), -10, 5, "PK real rate 2021");
+    inBand(get("india", "fiscal-balance", 2018), -5, 0, "IN fiscal 2018");
+    inBand(get("sri-lanka", "fiscal-balance", 2018), -8, -3, "LK fiscal 2018");
   });
+
+  // Series the publisher genuinely covers with less than 10 observations.
+  // The inverted assertion keeps the list honest: if data improves, the test
+  // tells you to delete the entry rather than silently extending the pass.
+  const THIN_SERIES_OK = new Set([
+    "pakistan:fiscal-balance", // WDI GC.* has no Pakistan observations
+    "nepal:real-interest-rate", // WDI has no Nepal real-rate observations
+  ]);
 
   it("every file has a real history: >=20 rows and >=10 non-null values", () => {
     for (const c of COUNTRIES) {
       for (const ind of INDICATORS) {
         const file = path.join(DATA_DIR, c.slug, `${ind.slug}.json`);
+        if (ind.optional && !fs.existsSync(file)) continue;
         const rows = JSON.parse(fs.readFileSync(file, "utf-8")) as { value: number | null }[];
         expect(rows.length, `${file} too thin`).toBeGreaterThanOrEqual(20);
         const nonNull = rows.filter((r) => r.value !== null && r.value !== undefined).length;
-        expect(nonNull, `${file} all-null series`).toBeGreaterThanOrEqual(10);
+        const key = `${c.slug}:${ind.slug}`;
+        if (THIN_SERIES_OK.has(key)) {
+          expect(nonNull, `${key}: coverage improved, remove it from THIN_SERIES_OK`).toBeLessThan(10);
+        } else {
+          expect(nonNull, `${file} all-null series`).toBeGreaterThanOrEqual(10);
+        }
       }
     }
   });

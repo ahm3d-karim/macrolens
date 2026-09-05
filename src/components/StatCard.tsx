@@ -1,11 +1,11 @@
-import type { SeriesPoint } from "@/lib/types";
+import type { IndicatorKind, SeriesPoint } from "@/lib/types";
 import { formatValue } from "@/lib/format";
 
 interface StatCardProps {
   label: string;
   latest: { year: number; value: number } | null;
   series: SeriesPoint[];
-  kind: "pct" | "usd" | "months" | "count";
+  kind: IndicatorKind;
   decimals: number;
   color: string;
   compareYears: number; // delta window
