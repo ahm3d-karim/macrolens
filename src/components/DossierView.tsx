@@ -7,6 +7,7 @@ import CountryToggle from "./CountryToggle";
 import StatCard from "./StatCard";
 import ChartCard from "./ChartCard";
 import { getInsight } from "@/lib/insights";
+import Link from "next/link";
 
 function latestOf(series: SeriesPoint[]): { year: number; value: number } | null {
   for (let i = series.length - 1; i >= 0; i--) {
@@ -121,7 +122,7 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
                   {row.map((slug) => {
                     const ind = INDICATOR_MAP[slug];
                     const byCountry = seriesByIndicator[slug] ?? {};
-                    const insight = getInsight(country.slug, slug);
+                    const insight = getInsight(country.slug, slug, (indSlug) => seriesByIndicator[indSlug] ?? {});
                     return (
                       <ChartCard
                         key={slug}
@@ -146,9 +147,9 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
         <p>
           Data: World Bank WDI · updated <span className="text-[#A0A0A8]">{updated}</span> ·
           methodology & limitations on the{" "}
-          <a href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">
+          <Link href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">
             methodology page
-          </a>
+          </Link>
           . Peers are shown in grey for context; every series is independently sourced.
         </p>
       </footer>

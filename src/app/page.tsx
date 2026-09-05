@@ -1,7 +1,7 @@
 import { COUNTRIES } from "@/lib/countries";
-import { INDICATOR_MAP } from "@/lib/indicators";
 import { latestValue, loadSeries, loadMeta } from "@/lib/loaders";
 import { formatValue } from "@/lib/format";
+import Link from "next/link";
 
 export default function HomePage() {
   const meta = loadMeta();
@@ -83,7 +83,7 @@ export default function HomePage() {
 
         <div className="flex flex-col justify-center rounded-xl border border-dashed border-[#2A2A32] p-6">
           <h3 className="text-sm font-semibold text-[#E8E8ED]">
-            Compare, don't just stare
+            Compare, don&apos;t just stare
           </h3>
           <p className="mt-2 text-xs leading-relaxed text-[#A0A0A8]">
             Every chart on every dossier can show all five countries at once.
@@ -92,7 +92,7 @@ export default function HomePage() {
             reserves collapse, Nepal&apos;s remittance dependence.
           </p>
           <p className="mt-4 text-xs leading-relaxed text-[#8A8A94]">
-            Method & limitations: <a href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">methodology page</a>
+            Method & limitations: <Link href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">methodology page</Link>
           </p>
         </div>
       </section>

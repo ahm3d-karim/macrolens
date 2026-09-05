@@ -85,9 +85,11 @@ export default function MethodologyPage() {
           never interpolation.
         </li>
         <li>
-          Chart titles state the finding the data shows, not just what was
-          plotted. Where the claim is a comparison (e.g. &quot;below the 3-month
-          danger line&quot;), it is computed from the same underlying series on
+          <strong className="text-[#E8E8ED]">Chart titles are generated, not typed.</strong>{" "}
+          Every title and summary line is computed at build time from the same
+          data files the chart plots. When the data refreshes, the findings
+          regenerate with it, and a test suite re-derives every statistic the
+          prose cites and fails if a number cannot be traced to the series on
           display.
         </li>
       </ul>
