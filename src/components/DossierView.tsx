@@ -41,6 +41,10 @@ const SECTIONS: { title: string; rows: string[][] }[] = [
     title: "External Sector",
     rows: [["exports", "imports", "current-account"], ["reserves-months", "remittances"]],
   },
+  {
+    title: "Fiscal & money",
+    rows: [["fiscal-balance", "public-debt"], ["exchange-rate", "real-interest-rate"]],
+  },
 ];
 
 const STAT_STRIP = ["gdp-growth", "inflation", "gdp-per-capita", "reserves-months", "remittances"];

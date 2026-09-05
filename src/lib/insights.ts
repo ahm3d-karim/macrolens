@@ -57,6 +57,8 @@ function fmt(ctx: Ctx, v: number): string {
       return `$${Math.round(v).toLocaleString("en-US")}`;
     case "months":
       return `${v.toFixed(ctx.ind.decimals)} months`;
+    case "rate":
+      return v.toFixed(ctx.ind.decimals);
     default:
       return v.toLocaleString("en-US");
   }
@@ -1051,6 +1053,168 @@ const remittanceBlocks: Block[] = [
   },
 ];
 
+// --- exchange rate (official, annual average, LCU per USD) ---------------------
+
+const exchangeRateBlocks: Block[] = [
+  // A decade of steady depreciation, or a peg.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10) return null;
+    const pct = ((latest.value - ago10.value) / Math.abs(ago10.value)) * 100;
+    if (pct >= 50) {
+      return {
+        title: `The currency has lost ground: ${fmt(ctx, ago10.value)} to ${fmt(ctx, latest.value)} per dollar`,
+        note:
+          `Official rate ${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), about ${signedPct(pct)} in a decade. ` +
+          `Annual averages, not spot rates.`,
+      };
+    }
+    if (pct <= 0.5) {
+      return {
+        title: `Pinned to the dollar: ${fmt(ctx, latest.value)} per dollar`,
+        note: `Official rate essentially unchanged in a decade: ${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), annual averages.`,
+      };
+    }
+    if (pct <= 10) {
+      return {
+        title: `Stable against the dollar over the decade`,
+        note: `Official rate ${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), within ${pct.toFixed(1)}% over ten years. Annual averages.`,
+      };
+    }
+    return null; // middling drift: the generic fallback speaks
+  },
+];
+
+// --- real interest rate (lending rate minus inflation) -------------------------
+
+const realInterestRateBlocks: Block[] = [
+  (ctx) => {
+    if (!need(ctx, 6)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value >= 5) {
+      return {
+        title: `Savers are paid in real terms: ${fmt(ctx, latest.value)}`,
+        note: `The real interest rate (lending rate minus inflation) stands at ${fmt(ctx, latest.value)} in ${latest.year}.`,
+      };
+    }
+    if (latest.value <= 0) {
+      return {
+        title: `Money loses value in real terms: ${fmt(ctx, latest.value)}`,
+        note: `The real interest rate sits at ${fmt(ctx, latest.value)} (${latest.year}): lending rates are running below inflation.`,
+      };
+    }
+    return null;
+  },
+];
+
+// --- fiscal balance (net lending/borrowing, % of GDP) ---------------------------
+
+const fiscalBalanceBlocks: Block[] = [
+  // Surplus.
+  (ctx) => {
+    if (!need(ctx, 6)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 1) return null;
+    const max = maxIn(ctx.w);
+    return {
+      title: `Budget in surplus: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Latest reading ${fmt(ctx, latest.value)} in ${latest.year}` +
+        (max ? `, window peak ${fmt(ctx, max.value)} (${max.year}).` : "."),
+    };
+  },
+  // Deficit at or beyond 5% of GDP.
+  (ctx) => {
+    if (!need(ctx, 6)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value > -5) return null;
+    const min10 = minIn(ctx.w, ctx.w.lastYear - 9);
+    return {
+      title: `Borrowing beyond comfort: deficit at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        (min10 && min10.value < latest.value
+          ? `Deepest reading of the past decade: ${fmt(ctx, min10.value)} (${min10.year}). `
+          : "") +
+        `Latest reading ${fmt(ctx, latest.value)} in ${latest.year}.`,
+    };
+  },
+  // Deficit contained within 3% of GDP.
+  (ctx) => {
+    if (!need(ctx, 6)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < -3 || latest.value >= 1) return null;
+    const min = minIn(ctx.w);
+    const max = maxIn(ctx.w);
+    return {
+      title: `Deficit contained: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        (min && max
+          ? `Window range ${fmt(ctx, min.value)} (${min.year}) to ${fmt(ctx, max.value)} (${max.year}). `
+          : "") +
+        `Latest reading ${fmt(ctx, latest.value)} in ${latest.year}.`,
+    };
+  },
+];
+
+// --- public debt (general government, domestic + external, % of GDP) ------------
+
+const publicDebtBlocks: Block[] = [
+  // Emergency levels.
+  (ctx) => {
+    if (!need(ctx, 8)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 80) return null;
+    const ago10 = yearsAgo(ctx.w, 10);
+    return {
+      title: `Debt at emergency levels: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `General-government debt stands at ${fmt(ctx, latest.value)} in ${latest.year}` +
+        (ago10 ? `, up from ${fmt(ctx, ago10.value)} in ${ago10.year}.` : "."),
+    };
+  },
+  // Elevated band.
+  (ctx) => {
+    if (!need(ctx, 8)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 60 || latest.value >= 80) return null;
+    const min10 = minIn(ctx.w, ctx.w.lastYear - 9);
+    const ago10 = yearsAgo(ctx.w, 10);
+    return {
+      title: `Debt elevated: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        (min10 && min10.year < latest.year
+          ? `Decade low ${fmt(ctx, min10.value)} (${min10.year}). `
+          : "") +
+        (ago10 ? `A decade ago: ${fmt(ctx, ago10.value)}. ` : "") +
+        `Latest reading ${latest.year}.`,
+    };
+  },
+  // Lighter debt with a clear decade trend.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value >= 60) return null;
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10) return null;
+    const delta = latest.value - ago10.value;
+    if (delta >= 10) {
+      return {
+        title: `Debt climbing: ${fmt(ctx, ago10.value)} to ${fmt(ctx, latest.value)} of GDP`,
+        note: `${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), ${pts(delta)} in a decade.`,
+      };
+    }
+    if (delta <= -10) {
+      return {
+        title: `Debt retreating: ${fmt(ctx, ago10.value)} to ${fmt(ctx, latest.value)} of GDP`,
+        note: `${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), ${pts(delta)} in a decade.`,
+      };
+    }
+    return null; // light and stable: the generic fallback speaks
+  },
+];
+
 // --- registry ---------------------------------------------------------------------
 
 const BLOCKS: Record<string, Block[]> = {
@@ -1065,6 +1229,10 @@ const BLOCKS: Record<string, Block[]> = {
   "current-account": currentAccountBlocks,
   "reserves-months": reservesBlocks,
   remittances: remittanceBlocks,
+  "exchange-rate": exchangeRateBlocks,
+  "real-interest-rate": realInterestRateBlocks,
+  "fiscal-balance": fiscalBalanceBlocks,
+  "public-debt": publicDebtBlocks,
 };
 
 // --- public API -------------------------------------------------------------------

@@ -239,4 +239,57 @@ describe("computed findings", () => {
     // With 2 points even the generic block declines to speak.
     expect(finding).toBeNull();
   });
+
+  describe("new-series block choice", () => {
+    // Synthetic fixtures: the point is that the RIGHT block fires (title
+    // shapes), not the prose quality. All values are grounded by construction.
+    const mk = (from: number, to: number, vFrom: number, vTo: number): SeriesPoint[] =>
+      Array.from({ length: to - from + 1 }, (_, i) => ({
+        year: from + i,
+        value: Math.round((vFrom + ((vTo - vFrom) * i) / (to - from)) * 100) / 100,
+      }));
+    const lookup = (series: Record<string, SeriesPoint[]>): SeriesLookup => () => series;
+    const full = (s: SeriesPoint[]) =>
+      Object.fromEntries(COUNTRIES.map((c) => [c.slug, s]));
+
+    it("fiscal balance: deep deficit, contained deficit, and surplus fire the right blocks", () => {
+      const deep = getFacts("pakistan", "fiscal-balance", lookup(full(mk(2010, 2025, -4, -6.4))));
+      expect(deep!.title).toContain("Borrowing beyond comfort");
+      const contained = getFacts("pakistan", "fiscal-balance", lookup(full(mk(2010, 2025, -2.5, -2.2))));
+      expect(contained!.title).toContain("Deficit contained");
+      const surplus = getFacts("pakistan", "fiscal-balance", lookup(full(mk(2010, 2025, 1.2, 2.1))));
+      expect(surplus!.title).toContain("Budget in surplus");
+    });
+
+    it("public debt: emergency fires above 80, elevated in the 60-80 band, climbing below", () => {
+      const emergency = getFacts("pakistan", "public-debt", lookup(full(mk(2005, 2025, 60, 92))));
+      expect(emergency!.title).toContain("Debt at emergency levels");
+      const elevated = getFacts("pakistan", "public-debt", lookup(full(mk(2005, 2025, 55, 74))));
+      expect(elevated!.title).toContain("Debt elevated");
+      const climbing = getFacts("pakistan", "public-debt", lookup(full(mk(2005, 2025, 29, 51))));
+      expect(climbing!.title).toContain("Debt climbing");
+      const retreating = getFacts("pakistan", "public-debt", lookup(full(mk(2005, 2025, 51, 29))));
+      expect(retreating!.title).toContain("Debt retreating");
+    });
+
+    it("exchange rate: depreciation and peg fire; middling drift falls through to generic", () => {
+      const lost = getFacts("pakistan", "exchange-rate", lookup(full(mk(2010, 2025, 85, 280))));
+      expect(lost!.title).toContain("lost ground");
+      const peg = getFacts("nepal", "exchange-rate", lookup(full(mk(2010, 2025, 119.9, 120.2))));
+      expect(peg!.title).toContain("Pinned to the dollar");
+      const drift = getFacts("india", "exchange-rate", lookup(full(mk(2010, 2025, 45, 58))));
+      expect(drift!.title).not.toContain("lost ground");
+      expect(drift!.title).not.toContain("Pinned");
+    });
+
+    it("real interest rate: negative and positive-real fire; empty series stays silent", () => {
+      const negative = getFacts("pakistan", "real-interest-rate", lookup(full(mk(2005, 2021, 3, -1.45))));
+      expect(negative!.title).toContain("Money loses value in real terms");
+      const positive = getFacts("pakistan", "real-interest-rate", lookup(full(mk(2005, 2021, 1, 6.2))));
+      expect(positive!.title).toContain("Savers are paid in real terms");
+      // Nepal's series is empty on disk: the engine must return null.
+      const nepal = getFacts("nepal", "real-interest-rate", lookupFromDisk());
+      expect(nepal).toBeNull();
+    });
+  });
 });

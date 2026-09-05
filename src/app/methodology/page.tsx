@@ -123,6 +123,19 @@ export default function MethodologyPage() {
           <strong className="text-[#E8E8ED]">This is not investment advice</strong>{" "}
           and not a forecast. The series shown are historical outcomes.
         </li>
+        <li>
+          <strong className="text-[#E8E8ED]">Two debt measures.</strong> External
+          debt (World Bank) covers only debt owed to nonresidents, as a share of
+          GNI. Public debt (IMF) is total general-government debt, domestic plus
+          external, as a share of GDP. They are different gauges and are never
+          added together here.
+        </li>
+        <li>
+          <strong className="text-[#E8E8ED]">Averages and completed years.</strong>{" "}
+          The exchange rate is the official period-average rate from WDI, an
+          annual average rather than a spot rate. The IMF public-debt series is
+          truncated to completed calendar years, so no projections appear.
+        </li>
       </ul>
 
       <p className="mt-10 rounded-xl border border-[#1A1A20] bg-[#111115] p-4 text-xs leading-relaxed text-[#8A8A94]">
