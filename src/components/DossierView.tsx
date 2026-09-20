@@ -35,7 +35,7 @@ const SECTIONS: { title: string; rows: string[][] }[] = [
   },
   {
     title: "Investment & Debt",
-    rows: [["gross-capital-formation", "external-debt"]],
+    rows: [["gross-capital-formation", "external-debt"], ["fdi-inflows", "manufacturing"]],
   },
   {
     title: "External Sector",

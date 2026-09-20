@@ -14,12 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://macrolens-pied.vercel.app"),
   title: {
     default: "Macro Lens: South Asia's macro economy, made comparable",
     template: "%s · Macro Lens",
   },
   description:
     "Five countries. Four decades. One honest look. Macro indicators for Pakistan, India, Bangladesh, Sri Lanka and Nepal, from primary sources: World Bank WDI.",
+  openGraph: {
+    type: "website",
+    siteName: "Macro Lens",
+    title: "Macro Lens: South Asia's macro economy, made comparable",
+    description:
+      "South Asia macro indicators from primary sources (World Bank WDI). Five countries, four decades, findings computed from the data at build time.",
+    url: "/",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

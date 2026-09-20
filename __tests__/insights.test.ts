@@ -291,5 +291,19 @@ describe("computed findings", () => {
       const nepal = getFacts("nepal", "real-interest-rate", lookupFromDisk());
       expect(nepal).toBeNull();
     });
+
+    it("FDI: sustained inflows and investor flight fire the right blocks", () => {
+      const strong = getFacts("india", "fdi-inflows", lookup(full(mk(2010, 2025, 1.0, 3.0))));
+      expect(strong!.title).toContain("Foreign capital keeps coming");
+      const thin = getFacts("pakistan", "fdi-inflows", lookup(full(mk(2010, 2025, 2.0, 0.4))));
+      expect(thin!.title).toContain("Investors stay away");
+    });
+
+    it("manufacturing: industrial base and thin base fire the right blocks", () => {
+      const base = getFacts("bangladesh", "manufacturing", lookup(full(mk(2010, 2025, 16, 20))));
+      expect(base!.title).toContain("Factory floor");
+      const thin = getFacts("nepal", "manufacturing", lookup(full(mk(2010, 2025, 12, 9))));
+      expect(thin!.title).toContain("Thin industrial base");
+    });
   });
 });

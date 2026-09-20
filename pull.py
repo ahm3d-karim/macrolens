@@ -19,11 +19,11 @@ import sys
 
 import requests
 
-BASE_DIR = r"C:/Users/Ahmad Karim/Documents/macrolens-data"
+BASE_DIR = r"C:/Users/Ahmad Karim/Documents/Projects/Active/DATA-PRODUCTS/macrolens-data"
 DATA_DIR = os.path.join(BASE_DIR, "data")
 UA = {"User-Agent": "macrolens-data-pipeline/0.1 (contact: research@example.com)"}
 
-GENERATED_AT = "2026-09-06"
+GENERATED_AT = "2026-09-20"
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -54,6 +54,8 @@ WDI_INDICATORS = [
     ("PA.NUS.FCRF", "exchange-rate", False),
     ("FR.INR.RINR", "real-interest-rate", False),
     ("GC.NLD.TOTL.GD.ZS", "fiscal-balance", False),
+    ("BX.KLT.DINV.WD.GD.ZS", "fdi-inflows", False),
+    ("NV.IND.MANF.ZS", "manufacturing", False),
 ]
 
 # NOTE: public debt (IMF WEO) is best-effort: the datamapper API returned 403

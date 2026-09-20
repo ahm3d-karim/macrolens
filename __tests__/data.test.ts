@@ -70,6 +70,9 @@ describe("macrolens data files", () => {
     inBand(get("pakistan", "real-interest-rate", 2021), -10, 5, "PK real rate 2021");
     inBand(get("india", "fiscal-balance", 2018), -5, 0, "IN fiscal 2018");
     inBand(get("sri-lanka", "fiscal-balance", 2018), -8, -3, "LK fiscal 2018");
+    inBand(get("bangladesh", "manufacturing", 2024), 18, 26, "BD manufacturing 2024");
+    inBand(get("nepal", "manufacturing", 2024), 3, 8, "NP manufacturing 2024");
+    inBand(get("india", "fdi-inflows", 2024), 0.4, 2.0, "IN FDI 2024");
   });
 
   // Series the publisher genuinely covers with less than 10 observations.

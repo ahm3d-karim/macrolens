@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
 import { INDICATORS, INDICATOR_MAP } from "@/lib/indicators";
 import { formatValue } from "@/lib/format";
@@ -11,15 +11,23 @@ import MacroChart from "./MacroChart";
 interface CompareViewProps {
   // indicator slug -> country slug -> series
   allSeries: Record<string, Record<string, SeriesPoint[]>>;
+  initialIndicator?: string;
 }
 
 const DEFAULT_INDICATOR = "gdp-per-capita";
 
-export default function CompareView({ allSeries }: CompareViewProps) {
-  const [indicatorSlug, setIndicatorSlug] = useState(DEFAULT_INDICATOR);
+export default function CompareView({ allSeries, initialIndicator }: CompareViewProps) {
+  const [indicatorSlug, setIndicatorSlug] = useState(initialIndicator ?? DEFAULT_INDICATOR);
   const [selected, setSelected] = useState<Set<CountrySlug>>(
     new Set(COUNTRIES.map((c) => c.slug)),
   );
+
+  // Keep the URL in step with the selected indicator so a single chart can be
+  // linked and shared. replaceState, not push: no history spam per pill click.
+  useEffect(() => {
+    const url = indicatorSlug === DEFAULT_INDICATOR ? "/compare" : `/compare?indicator=${indicatorSlug}`;
+    window.history.replaceState(null, "", url);
+  }, [indicatorSlug]);
 
   const ind = INDICATOR_MAP[indicatorSlug];
 

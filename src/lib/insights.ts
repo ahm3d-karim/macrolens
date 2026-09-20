@@ -1215,6 +1215,76 @@ const publicDebtBlocks: Block[] = [
   },
 ];
 
+// --- FDI net inflows (% of GDP) ------------------------------------------------
+
+const fdiBlocks: Block[] = [
+  // Sustained investor pull.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 1.5) return null;
+    const rank = rankByLatest(ctx);
+    const ago10 = yearsAgo(ctx.w, 10);
+    return {
+      title: `Foreign capital keeps coming: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `FDI net inflows stand at ${fmt(ctx, latest.value)} (${latest.year})` +
+        (ago10 ? `, against ${fmt(ctx, ago10.value)} a decade earlier (${ago10.year}). ` : ". ") +
+        (rank ? `Ranked ${rank.rank} of ${rank.of} in the region.` : ""),
+    };
+  },
+  // Thin or absent inflows. The line sits at 0.6% so that a country near 1%
+  // (India, the region's largest recipient) falls through to the neutral
+  // generic summary rather than being read as investor flight.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value >= 0.6) return null;
+    const max = maxIn(ctx.w);
+    return {
+      title: `Investors stay away: FDI at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Net inflows are ${fmt(ctx, latest.value)} of GDP (${latest.year})` +
+        (max && max.year !== latest.year
+          ? `, well below the window peak of ${fmt(ctx, max.value)} (${max.year}).`
+          : "."),
+    };
+  },
+];
+
+// --- manufacturing value added (% of GDP) --------------------------------------
+
+const manufacturingBlocks: Block[] = [
+  // Industrial base.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 15) return null;
+    const rank = rankByLatest(ctx);
+    return {
+      title: `Factory floor: manufacturing at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Manufacturing value added is ${fmt(ctx, latest.value)} of GDP (${latest.year})` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region.` : "."),
+    };
+  },
+  // Thin industrial base.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value >= 15) return null;
+    const min = minIn(ctx.w, ctx.w.lastYear - 9);
+    return {
+      title: `Thin industrial base: manufacturing ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Manufacturing value added sits at ${fmt(ctx, latest.value)} of GDP (${latest.year})` +
+        (min && min.year !== latest.year
+          ? `, near the past-decade low of ${fmt(ctx, min.value)} (${min.year}).`
+          : "."),
+    };
+  },
+];
+
 // --- registry ---------------------------------------------------------------------
 
 const BLOCKS: Record<string, Block[]> = {
@@ -1233,6 +1303,8 @@ const BLOCKS: Record<string, Block[]> = {
   "real-interest-rate": realInterestRateBlocks,
   "fiscal-balance": fiscalBalanceBlocks,
   "public-debt": publicDebtBlocks,
+  "fdi-inflows": fdiBlocks,
+  manufacturing: manufacturingBlocks,
 };
 
 // --- public API -------------------------------------------------------------------

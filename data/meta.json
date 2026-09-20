@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06",
+  "generatedAt": "2026-09-20",
   "lastUpdated": "2026-07-13",
   "sources": {
     "broad-money": {
@@ -26,6 +26,11 @@
       "source": "World Bank WDI",
       "code": "DT.DOD.DECT.GN.ZS",
       "url": "https://data.worldbank.org/indicator/DT.DOD.DECT.GN.ZS"
+    },
+    "fdi-inflows": {
+      "source": "World Bank WDI",
+      "code": "BX.KLT.DINV.WD.GD.ZS",
+      "url": "https://data.worldbank.org/indicator/BX.KLT.DINV.WD.GD.ZS"
     },
     "fiscal-balance": {
       "source": "World Bank WDI",
@@ -56,6 +61,11 @@
       "source": "World Bank WDI",
       "code": "FP.CPI.TOTL.ZG",
       "url": "https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG"
+    },
+    "manufacturing": {
+      "source": "World Bank WDI",
+      "code": "NV.IND.MANF.ZS",
+      "url": "https://data.worldbank.org/indicator/NV.IND.MANF.ZS"
     },
     "population": {
       "source": "World Bank WDI",

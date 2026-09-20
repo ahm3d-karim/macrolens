@@ -10,10 +10,19 @@ export const metadata: Metadata = {
     "One indicator, five countries, same scale. Side-by-side South Asia macro comparisons from World Bank WDI data.",
 };
 
-export default function ComparePage() {
+export default async function ComparePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ indicator?: string }>;
+}) {
+  const { indicator } = await searchParams;
   const allSeries: Record<string, Record<string, SeriesPoint[]>> = {};
   for (const ind of INDICATORS) {
     allSeries[ind.slug] = loadAllCountriesSeries(ind.slug);
   }
-  return <CompareView allSeries={allSeries} />;
+  const initial =
+    indicator && INDICATORS.some((i) => i.slug === indicator)
+      ? indicator
+      : undefined;
+  return <CompareView allSeries={allSeries} initialIndicator={initial} />;
 }

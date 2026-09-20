@@ -162,6 +162,26 @@ export const INDICATORS: IndicatorMeta[] = [
     decimals: 1,
     optional: true,
   },
+  {
+    slug: "fdi-inflows",
+    title: "FDI net inflows",
+    unit: "% of GDP",
+    kind: "pct",
+    code: "BX.KLT.DINV.WD.GD.ZS",
+    source: "World Bank WDI",
+    sourceUrl: "https://data.worldbank.org/indicator/BX.KLT.DINV.WD.GD.ZS",
+    decimals: 1,
+  },
+  {
+    slug: "manufacturing",
+    title: "Manufacturing value added",
+    unit: "% of GDP",
+    kind: "pct",
+    code: "NV.IND.MANF.ZS",
+    source: "World Bank WDI",
+    sourceUrl: "https://data.worldbank.org/indicator/NV.IND.MANF.ZS",
+    decimals: 1,
+  },
 ];
 
 export const INDICATOR_MAP: Record<string, IndicatorMeta> = Object.fromEntries(
