@@ -1,6 +1,11 @@
 import type { IndicatorMeta, SeriesPoint } from "@/lib/types";
 import MacroChart from "./MacroChart";
 
+// The shipped series, as committed: the site promises every number is
+// reproducible from primary sources, so the raw file is one click away.
+const DATA_BASE =
+  "https://raw.githubusercontent.com/ahm3d-karim/macrolens/master/data";
+
 interface ChartCardProps {
   indicator: IndicatorMeta;
   seriesByCountry: Record<string, SeriesPoint[]>;
@@ -21,7 +26,10 @@ export default function ChartCard({
   height = 280,
 }: ChartCardProps) {
   return (
-    <div className="flex flex-col rounded-xl border border-[#1A1A20] bg-[#111115] p-5">
+    <div
+      id={indicator.slug}
+      className="flex scroll-mt-24 flex-col rounded-xl border border-[#1A1A20] bg-[#111115] p-5"
+    >
       <h3 className="text-base font-semibold leading-snug text-[#E8E8ED]">
         {insightTitle ?? indicator.title}
       </h3>
@@ -43,14 +51,31 @@ export default function ChartCard({
         <span>
           {indicator.source} · {indicator.code}
         </span>
-        <a
-          href={indicator.sourceUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="text-[#52B788] hover:text-[#6ED49C]"
-        >
-          source
-        </a>
+        <span className="flex items-center gap-3">
+          <a
+            href={`#${indicator.slug}`}
+            className="text-[#8A8A94] hover:text-[#E8E8ED]"
+            title="Link straight to this chart"
+          >
+            permalink
+          </a>
+          <a
+            href={`${DATA_BASE}/${active}/${indicator.slug}.json`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#52B788] hover:text-[#6ED49C]"
+          >
+            raw data
+          </a>
+          <a
+            href={indicator.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#52B788] hover:text-[#6ED49C]"
+          >
+            source
+          </a>
+        </span>
       </div>
     </div>
   );

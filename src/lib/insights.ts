@@ -1285,6 +1285,237 @@ const manufacturingBlocks: Block[] = [
   },
 ];
 
+// --- agriculture (share of GDP) ------------------------------------------------
+
+const agricultureBlocks: Block[] = [
+  // Still a farming economy: agriculture is a fifth of output or more.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    // 18 is the line where "farming economy" still reads true: the next value
+    // below it is India at 16.2, an economy whose agriculture share is flat and
+    // long since minor. Anything less falls through to the neutral block.
+    if (latest.value < 18) return null;
+    const rank = rankByLatest(ctx);
+    const range = peersRange(ctx);
+    return {
+      title: `Still a farming economy: agriculture at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Agriculture value added is ${fmt(ctx, latest.value)} of GDP (${latest.year})` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region. ` : ". ") +
+        (range
+          ? `The regional range runs from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).`
+          : ""),
+    };
+  },
+  // Farming's share thinning over the decade.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10 || ago10.value - latest.value < 3) return null;
+    return {
+      title: `Farming faded ${pts(ago10.value - latest.value)} of output in a decade`,
+      note: `Agriculture value added fell from ${fmt(ctx, ago10.value)} of GDP in ${ago10.year} to ${fmt(ctx, latest.value)} in ${latest.year}.`,
+    };
+  },
+  // Otherwise: the share as it stands, against peers.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const rank = rankByLatest(ctx);
+    const range = peersRange(ctx);
+    return {
+      title: `Agriculture at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Latest reading ${latest.year}` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region. ` : ". ") +
+        (range ? `Peers run from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).` : ""),
+    };
+  },
+];
+
+// --- gross savings (% of GDP) ---------------------------------------------------
+
+const grossSavingsBlocks: Block[] = [
+  // Investment outruns domestic savings: the gap had to come from abroad.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const gcf = crossWindow(ctx, "gross-capital-formation", ctx.c.slug);
+    if (!gcf) return null;
+    const latest = latestOf(ctx.w);
+    const inv = valueInYear(gcf, latest.year, 1);
+    if (!inv || inv.value - latest.value < 2) return null;
+    return {
+      title: `Savings do not cover investment: a gap of ${pts(inv.value - latest.value)}`,
+      note:
+        `Gross savings were ${fmt(ctx, latest.value)} of GDP in ${latest.year}` +
+        ` against ${inv.value.toFixed(ctx.ind.decimals)}% of GDP invested (${inv.year}), so the difference was financed from abroad.`,
+    };
+  },
+  // Savings rate as it stands, ranked against peers.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const rank = rankByLatest(ctx);
+    const range = peersRange(ctx);
+    const ago10 = yearsAgo(ctx.w, 10);
+    return {
+      title: `Domestic savings at ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `Latest reading ${latest.year}` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region. ` : ". ") +
+        (ago10 ? `A decade ago: ${fmt(ctx, ago10.value)} (${ago10.year}). ` : "") +
+        (range ? `Peers run from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).` : ""),
+    };
+  },
+];
+
+// --- external debt service (% of exports) ---------------------------------------
+
+const debtServiceBlocks: Block[] = [
+  // Creditors absorbing most of what the country earns abroad.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    if (latest.value < 25) return null;
+    const rank = rankByLatest(ctx);
+    const range = peersRange(ctx);
+    return {
+      title: `Debt service takes ${fmt(ctx, latest.value)} of export earnings`,
+      note:
+        `Payments on external debt were ${fmt(ctx, latest.value)} of exports of goods, services and primary income in ${latest.year}` +
+        (rank && rank.rank === 1
+          ? `, the heaviest load of ${rank.of} in the region.`
+          : range
+            ? `, against a peer range of ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).`
+            : "."),
+    };
+  },
+  // The load moving over the decade.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10) return null;
+    const d = latest.value - ago10.value;
+    if (Math.abs(d) < 3) return null;
+    return {
+      title:
+        d > 0
+          ? `Debt service climbing ${pts(d)} over the decade`
+          : `Debt service down ${pts(-d)} over the decade`,
+      note: `From ${fmt(ctx, ago10.value)} of exports in ${ago10.year} to ${fmt(ctx, latest.value)} in ${latest.year}.`,
+    };
+  },
+  // Otherwise: the load as it stands, against peers.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const range = peersRange(ctx);
+    const rank = rankByLatest(ctx);
+    return {
+      title: `External debt service at ${fmt(ctx, latest.value)} of exports`,
+      note:
+        `Latest reading ${latest.year}` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region. ` : ". ") +
+        (range ? `Peers run from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).` : ""),
+    };
+  },
+];
+
+// --- unemployment (% of labor force) --------------------------------------------
+
+const unemploymentBlocks: Block[] = [
+  // The region's outlier.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const rank = rankByLatest(ctx);
+    const latest = latestOf(ctx.w);
+    const range = peersRange(ctx);
+    if (!rank || rank.rank !== 1 || !range) return null;
+    return {
+      title: `The region's highest unemployment: ${fmt(ctx, latest.value)}`,
+      note: `Joblessness ran at ${fmt(ctx, latest.value)} of the labor force in ${latest.year}, against a peer range of ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).`,
+    };
+  },
+  // Rising rate.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10 || latest.value - ago10.value < 1.5) return null;
+    return {
+      title: `Unemployment climbing to ${fmt(ctx, latest.value)}`,
+      note: `Up ${pts(latest.value - ago10.value)} from ${fmt(ctx, ago10.value)} in ${ago10.year}.`,
+    };
+  },
+  // Otherwise: the rate as it stands, against peers.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const range = peersRange(ctx);
+    const ago10 = yearsAgo(ctx.w, 10);
+    return {
+      title: `Unemployment at ${fmt(ctx, latest.value)} of the labor force`,
+      note:
+        `Latest reading ${latest.year}` +
+        (range ? `. Peers run from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).` : ".") +
+        (ago10 ? ` A decade ago: ${fmt(ctx, ago10.value)} (${ago10.year}).` : ""),
+    };
+  },
+];
+
+// --- female labor force participation (% of women 15+) --------------------------
+
+const femaleLaborBlocks: Block[] = [
+  // Lowest in the region: stuck, and the note says where the peer band sits.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const rank = rankByLatest(ctx);
+    const latest = latestOf(ctx.w);
+    const range = peersRange(ctx);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!rank || rank.rank !== rank.of || !range) return null;
+    return {
+      title: `Women's labor force participation stuck at ${fmt(ctx, latest.value)}`,
+      note:
+        `The lowest of ${rank.of} in the region (${latest.year}), against a peer range of ${range.min} (${range.minName}) to ${range.max} (${range.maxName})` +
+        (ago10 ? `. A decade ago: ${fmt(ctx, ago10.value)} (${ago10.year}).` : "."),
+    };
+  },
+  // Movement over the decade.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const ago10 = yearsAgo(ctx.w, 10);
+    if (!ago10) return null;
+    const d = latest.value - ago10.value;
+    if (Math.abs(d) < 1) return null;
+    return {
+      title:
+        d > 0
+          ? `More women in the labor force: ${fmt(ctx, latest.value)}`
+          : `Women's participation slipping: ${fmt(ctx, latest.value)}`,
+      note: `${fmt(ctx, ago10.value)} of women 15 and over in ${ago10.year} to ${fmt(ctx, latest.value)} in ${latest.year} (${pts(d)}).`,
+    };
+  },
+  // Otherwise: the rate as it stands, against peers.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const rank = rankByLatest(ctx);
+    const range = peersRange(ctx);
+    return {
+      title: `Women's labor force participation at ${fmt(ctx, latest.value)}`,
+      note:
+        `Latest reading ${latest.year}` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region. ` : ". ") +
+        (range ? `Peers run from ${range.min} (${range.minName}) to ${range.max} (${range.maxName}).` : ""),
+    };
+  },
+];
+
 // --- registry ---------------------------------------------------------------------
 
 const BLOCKS: Record<string, Block[]> = {
@@ -1305,6 +1536,11 @@ const BLOCKS: Record<string, Block[]> = {
   "public-debt": publicDebtBlocks,
   "fdi-inflows": fdiBlocks,
   manufacturing: manufacturingBlocks,
+  agriculture: agricultureBlocks,
+  "gross-savings": grossSavingsBlocks,
+  "debt-service": debtServiceBlocks,
+  unemployment: unemploymentBlocks,
+  "female-labor-participation": femaleLaborBlocks,
 };
 
 // --- public API -------------------------------------------------------------------

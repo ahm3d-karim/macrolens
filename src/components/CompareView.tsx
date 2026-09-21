@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
+import { ALL_COUNTRIES, COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
 import { INDICATORS, INDICATOR_MAP } from "@/lib/indicators";
 import { formatValue } from "@/lib/format";
 import type { CountrySlug, SeriesPoint } from "@/lib/types";
@@ -33,7 +33,7 @@ export default function CompareView({ allSeries, initialIndicator }: CompareView
 
   const seriesByCountry = useMemo(() => {
     const out: Record<string, SeriesPoint[]> = {};
-    for (const c of COUNTRIES) {
+    for (const c of ALL_COUNTRIES) {
       if (selected.has(c.slug)) out[c.slug] = allSeries[indicatorSlug]?.[c.slug] ?? [];
     }
     return out;
@@ -69,11 +69,13 @@ export default function CompareView({ allSeries, initialIndicator }: CompareView
         Compare
       </p>
       <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#E8E8ED]">
-        One indicator, five countries, same scale
+        One indicator, any mix of countries, same scale
       </h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#A0A0A8]">
         Pick an indicator, keep the countries you want, and read the spread.
-        Same source, same unit, same scale on every line.
+        Same source, same unit, same scale on every line. Vietnam and Indonesia
+        are benchmarks: they can join the table, but they sit outside the
+        regional findings on the dossiers.
       </p>
 
       {/* Indicator pills (single select) */}
@@ -106,7 +108,7 @@ export default function CompareView({ allSeries, initialIndicator }: CompareView
           Countries
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
-          {COUNTRIES.map((c) => {
+          {ALL_COUNTRIES.map((c) => {
             const on = selected.has(c.slug);
             return (
               <button
@@ -117,12 +119,19 @@ export default function CompareView({ allSeries, initialIndicator }: CompareView
                 className={`inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-sm font-medium transition-all ${
                   on
                     ? "border-transparent text-[#0A0A0B]"
-                    : "border-[#2A2A32] text-[#A0A0A8] hover:border-[#3A3A44] hover:text-[#E8E8ED]"
+                    : `text-[#A0A0A8] hover:border-[#3A3A44] hover:text-[#E8E8ED] ${
+                        c.benchmark ? "border-dashed border-[#2A2A32]" : "border-[#2A2A32]"
+                      }`
                 }`}
                 style={on ? { backgroundColor: c.color } : undefined}
               >
                 <span className="mr-1.5">{c.flag}</span>
                 {c.name}
+                {c.benchmark && (
+                  <span className="ml-1.5 text-[10px] uppercase tracking-wide opacity-70">
+                    benchmark
+                  </span>
+                )}
               </button>
             );
           })}
@@ -225,8 +234,9 @@ export default function CompareView({ allSeries, initialIndicator }: CompareView
         <p>
           Deltas compare each country&apos;s latest reading with its observation
           closest to ten years earlier (the reference year is shown, and short
-          series fall back to their earliest observation). Population is
-          excluded: it is a scale, not a performance indicator.
+          series fall back to their earliest observation). Ranks are among the
+          countries you selected, not the region. Population is excluded: it is
+          a scale, not a performance indicator.
         </p>
       </footer>
     </div>

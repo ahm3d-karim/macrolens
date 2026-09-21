@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { SeriesPoint } from "./types";
-import { COUNTRY_MAP, COUNTRIES } from "./countries";
+import { COUNTRY_MAP, ALL_COUNTRIES } from "./countries";
 
 export const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -23,7 +23,7 @@ export function loadAllCountriesSeries(indicator: string): Record<
   SeriesPoint[]
 > {
   const out: Record<string, SeriesPoint[]> = {};
-  for (const c of COUNTRIES) {
+  for (const c of ALL_COUNTRIES) {
     out[c.slug] = loadSeries(c.slug, indicator);
   }
   return out;

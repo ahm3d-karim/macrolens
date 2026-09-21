@@ -2,6 +2,11 @@
   "generatedAt": "2026-09-20",
   "lastUpdated": "2026-07-13",
   "sources": {
+    "agriculture": {
+      "source": "World Bank WDI",
+      "code": "NV.AGR.TOTL.ZS",
+      "url": "https://data.worldbank.org/indicator/NV.AGR.TOTL.ZS"
+    },
     "broad-money": {
       "source": "World Bank WDI",
       "code": "FM.LBL.BMNY.GD.ZS",
@@ -11,6 +16,11 @@
       "source": "World Bank WDI",
       "code": "BN.CAB.XOKA.GD.ZS",
       "url": "https://data.worldbank.org/indicator/BN.CAB.XOKA.GD.ZS"
+    },
+    "debt-service": {
+      "source": "World Bank WDI",
+      "code": "DT.TDS.DECT.EX.ZS",
+      "url": "https://data.worldbank.org/indicator/DT.TDS.DECT.EX.ZS"
     },
     "exchange-rate": {
       "source": "World Bank WDI",
@@ -32,6 +42,11 @@
       "code": "BX.KLT.DINV.WD.GD.ZS",
       "url": "https://data.worldbank.org/indicator/BX.KLT.DINV.WD.GD.ZS"
     },
+    "female-labor-participation": {
+      "source": "World Bank WDI",
+      "code": "SL.TLF.CACT.FE.ZS",
+      "url": "https://data.worldbank.org/indicator/SL.TLF.CACT.FE.ZS"
+    },
     "fiscal-balance": {
       "source": "World Bank WDI",
       "code": "GC.NLD.TOTL.GD.ZS",
@@ -51,6 +66,11 @@
       "source": "World Bank WDI",
       "code": "NE.GDI.TOTL.ZS",
       "url": "https://data.worldbank.org/indicator/NE.GDI.TOTL.ZS"
+    },
+    "gross-savings": {
+      "source": "World Bank WDI",
+      "code": "NY.GNS.ICTR.ZS",
+      "url": "https://data.worldbank.org/indicator/NY.GNS.ICTR.ZS"
     },
     "imports": {
       "source": "World Bank WDI",
@@ -91,6 +111,11 @@
       "source": "World Bank WDI",
       "code": "FI.RES.TOTL.MO",
       "url": "https://data.worldbank.org/indicator/FI.RES.TOTL.MO"
+    },
+    "unemployment": {
+      "source": "World Bank WDI",
+      "code": "SL.UEM.TOTL.ZS",
+      "url": "https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS"
     }
   }
 }
