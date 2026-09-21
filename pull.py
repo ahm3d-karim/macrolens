@@ -10,6 +10,7 @@ Outputs:
   data/meta.json                         generation metadata + per-indicator source info.
 
 Idempotent: safe to re-run; files are overwritten deterministically.
+Writes data/ next to itself (pipeline dir, repo root, or a CI checkout).
 Usage: python pull.py
 """
 
@@ -18,14 +19,17 @@ import math
 import os
 import sys
 import time
+from datetime import date
 
 import requests
 
-BASE_DIR = r"C:/Users/Ahmad Karim/Documents/Projects/Active/DATA-PRODUCTS/macrolens-data"
+# data/ lives next to this file, so the same script works in the pipeline dir,
+# in the repo (its committed copy) and on a CI runner. A hard-coded path was
+# the reason a run used to write somewhere unexpected.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 UA = {"User-Agent": "macrolens-data-pipeline/0.1 (contact: research@example.com)"}
 
-GENERATED_AT = "2026-09-20"
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -263,7 +267,7 @@ def main():
 
     # --- meta.json ---
     meta = {
-        "generatedAt": GENERATED_AT,
+        "generatedAt": date.today().isoformat(),
         "lastUpdated": max(wdi_lastupdated) if wdi_lastupdated else None,
         "sources": dict(sorted(sources.items())),
     }
