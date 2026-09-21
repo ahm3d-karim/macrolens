@@ -73,6 +73,11 @@ describe("macrolens data files", () => {
     inBand(get("bangladesh", "manufacturing", 2024), 18, 26, "BD manufacturing 2024");
     inBand(get("nepal", "manufacturing", 2024), 3, 8, "NP manufacturing 2024");
     inBand(get("india", "fdi-inflows", 2024), 0.4, 2.0, "IN FDI 2024");
+    inBand(get("pakistan", "agriculture", 2024), 15, 30, "PK agriculture 2024");
+    inBand(get("pakistan", "debt-service", 2024), 20, 60, "PK debt service 2024");
+    inBand(get("nepal", "unemployment", 2024), 5, 20, "NP unemployment 2024");
+    inBand(get("bangladesh", "gross-savings", 2024), 20, 45, "BD gross savings 2024");
+    inBand(get("india", "female-labor-participation", 2024), 20, 45, "IN female LFP 2024");
   });
 
   // Series the publisher genuinely covers with less than 10 observations.

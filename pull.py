@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Macrolens data pipeline: World Bank WDI (15 indicators) + IMF WEO public debt
+"""Macrolens data pipeline: World Bank WDI (22 indicators) + IMF WEO public debt
 (best-effort, optional) for 5 South Asian countries -> normalized per-country
 per-indicator JSON files.
 
@@ -16,6 +16,7 @@ import json
 import math
 import os
 import sys
+import time
 
 import requests
 
@@ -56,6 +57,11 @@ WDI_INDICATORS = [
     ("GC.NLD.TOTL.GD.ZS", "fiscal-balance", False),
     ("BX.KLT.DINV.WD.GD.ZS", "fdi-inflows", False),
     ("NV.IND.MANF.ZS", "manufacturing", False),
+    ("NY.GNS.ICTR.ZS", "gross-savings", False),
+    ("DT.TDS.DECT.EX.ZS", "debt-service", False),
+    ("NV.AGR.TOTL.ZS", "agriculture", False),
+    ("SL.UEM.TOTL.ZS", "unemployment", False),
+    ("SL.TLF.CACT.FE.ZS", "female-labor-participation", False),
 ]
 
 # NOTE: public debt (IMF WEO) is best-effort: the datamapper API returned 403
@@ -89,14 +95,25 @@ def wdi_page_url(code, indicator, page=1):
 # ---------------------------------------------------------------------------
 def fetch_wdi(code, indicator):
     """Fetch full history for one country x indicator, handling pagination.
-    Returns (records, lastupdated)."""
+    Returns (records, lastupdated). Retries transient read timeouts: a single
+    flaky read from api.worldbank.org must not kill a whole refresh."""
     records = []
     lastupdated = None
     page = 1
     while True:
-        r = requests.get(wdi_page_url(code, indicator, page), headers=UA, timeout=60)
-        r.raise_for_status()
-        payload = r.json()
+        payload = None
+        for attempt in range(4):
+            try:
+                r = requests.get(wdi_page_url(code, indicator, page), headers=UA, timeout=60)
+                r.raise_for_status()
+                payload = r.json()
+                break
+            except requests.RequestException as e:
+                if attempt == 3:
+                    raise
+                print(f"  retry {attempt + 1} {code}/{indicator} p{page}: {e.__class__.__name__}")
+                sys.stdout.flush()
+                time.sleep(3 * (attempt + 1))
         meta = payload[0]
         if "message" in meta:  # API error object
             raise RuntimeError(f"WDI error for {code}/{indicator}: {meta['message']}")

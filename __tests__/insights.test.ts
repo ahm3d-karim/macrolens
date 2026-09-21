@@ -79,6 +79,9 @@ function groundTruth(
       const mineAt = pts.find((q) => q.year === p.year);
       if (mineAt && mineAt.value !== 0) addVal(p.value / mineAt.value);
       if (mineAt && p.value !== 0) addVal(mineAt.value / p.value);
+      // Same-year gap between a peer or cross series and mine ("a gap of X
+      // percentage points"), which the savings block cites.
+      if (mineAt) addVal(Math.abs(p.value - mineAt.value));
       if (mineLatest !== 0) addVal(p.value / mineLatest);
       if (p.value !== 0) addVal(mineLatest / p.value);
     }
@@ -178,8 +181,11 @@ describe("computed findings", () => {
   it("every number in prose is grounded in the shipped series (R-17)", () => {
     for (const ind of INDICATORS) {
       const byCountry = windowsByCountry(ind.slug);
-      // Cross-series lookups the engine may cite (imports vs exports etc.).
-      const crossSlugs = ["imports", "exports", "remittances"].filter((s) => s !== ind.slug);
+      // Cross-series lookups the engine may cite (imports vs exports,
+      // savings vs investment, etc.).
+      const crossSlugs = ["imports", "exports", "remittances", "gross-capital-formation"].filter(
+        (s) => s !== ind.slug,
+      );
       for (const c of COUNTRIES) {
         const w = byCountry[c.slug];
         if (!w) continue;

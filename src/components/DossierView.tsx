@@ -34,8 +34,12 @@ const SECTIONS: { title: string; rows: string[][] }[] = [
     rows: [["inflation", "broad-money"]],
   },
   {
+    title: "Structure & jobs",
+    rows: [["agriculture", "manufacturing"], ["unemployment", "female-labor-participation"]],
+  },
+  {
     title: "Investment & Debt",
-    rows: [["gross-capital-formation", "external-debt"], ["fdi-inflows", "manufacturing"]],
+    rows: [["gross-capital-formation", "gross-savings"], ["fdi-inflows", "debt-service"], ["external-debt"]],
   },
   {
     title: "External Sector",
