@@ -50,6 +50,7 @@ export default function ChartCard({
           indicator={indicator}
           showPeers={showPeers}
           height={height}
+          label={`${insightTitle ?? indicator.title}. ${insightNote ?? indicator.unit}`}
         />
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#1A1A20] pt-2 text-[11px] text-[#8A8A94]">
