@@ -36,6 +36,10 @@ npm run test            # strict JSON, series sanity, findings groundedness
 npm run build           # regenerates the static site
 ```
 
+`pull.py` writes `data/` next to itself, so the same script works in the pipeline directory, in this repo and in a CI checkout. It records what it revised relative to the vintage it found (`meta.json` → `revisions`), and `python pull.py --selftest` checks that diffing without touching the network.
+
+A scheduled workflow (`.github/workflows/refresh.yml`) runs the pipeline on the 1st of each month and opens a pull request when the data moved. Master is protected, so a refresh goes through the same lint, test and build gate as any other change.
+
 The pipeline is intentionally dumb: pull → verify → build. If the APIs are down or a series breaks, tests fail loudly instead of shipping gaps.
 
 ## Chart philosophy
