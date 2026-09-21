@@ -1,5 +1,6 @@
+import { ALL_COUNTRIES } from "@/lib/countries";
 import { INDICATORS } from "@/lib/indicators";
-import { loadMeta } from "@/lib/loaders";
+import { coverageSpan, loadMeta, loadSeries } from "@/lib/loaders";
 
 export const metadata = {
   title: "Methodology & sources",
@@ -11,6 +12,17 @@ export default function MethodologyPage() {
   const meta = loadMeta();
   const updated =
     typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "n/a";
+
+  // Read straight off the shipped files, so this table cannot claim more coverage
+  // than the data has.
+  const coverage = INDICATORS.map((ind) => {
+    const cells = ALL_COUNTRIES.map((c) => ({
+      c,
+      span: coverageSpan(loadSeries(c.slug, ind.slug)),
+    }));
+    const latest = Math.max(0, ...cells.map((x) => x.span?.last ?? 0));
+    return { ind, cells, latest };
+  });
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pb-20 pt-12">
@@ -66,6 +78,44 @@ export default function MethodologyPage() {
                     {i.source}
                   </a>
                 </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
+        What the data covers
+      </h2>
+      <p className="mt-3 text-xs leading-relaxed text-[#8A8A94]">
+        The first and last year each series actually has an observation for, by
+        country. An asterisk marks a series that stops earlier here than it does
+        for the best-covered country in that row; interior gaps are shown on the
+        charts and never interpolated. Two-letter codes match the header.
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full border-collapse text-xs">
+          <thead>
+            <tr className="border-b border-[#2A2A32] text-left text-[11px] uppercase tracking-wider text-[#8A8A94]">
+              <th className="py-2 pr-3 font-semibold">Series</th>
+              {ALL_COUNTRIES.map((c) => (
+                <th key={c.slug} className="py-2 pr-3 font-semibold">
+                  {c.short}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {coverage.map(({ ind, cells, latest }) => (
+              <tr key={ind.slug} className="border-b border-[#1A1A20] text-[#A0A0A8]">
+                <td className="py-2 pr-3 font-medium text-[#E8E8ED]">{ind.title}</td>
+                {cells.map(({ c, span }) => (
+                  <td key={c.slug} className="py-2 pr-3 font-mono">
+                    {span
+                      ? `${span.first}-${span.last}${span.last < latest ? "*" : ""}`
+                      : "none"}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

@@ -65,6 +65,22 @@ export function yearRange(series: SeriesPoint[]): {
   return { start: years[0], end: years[years.length - 1] };
 }
 
+// First and last year with an actual observation, nulls skipped: the coverage
+// a series really has, as opposed to the year range the file happens to list.
+// A series can end in 2025 and still stop in 2019, and the site says so.
+export function coverageSpan(
+  series: SeriesPoint[],
+): { first: number; last: number } | null {
+  let first: number | null = null;
+  let last: number | null = null;
+  for (const p of series) {
+    if (p.value === null || p.value === undefined) continue;
+    if (first === null) first = p.year;
+    last = p.year;
+  }
+  return first === null || last === null ? null : { first, last };
+}
+
 export function countryName(slug: string): string {
   return COUNTRY_MAP[slug as keyof typeof COUNTRY_MAP]?.name ?? slug;
 }
