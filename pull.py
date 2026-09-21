@@ -208,11 +208,87 @@ def normalize_imf(country_map, iso3):
 
 
 # ---------------------------------------------------------------------------
+# Vintages
+# ---------------------------------------------------------------------------
+def load_vintage(data_dir):
+    """The data currently on disk, as {(slug, country, year): value}. A refresh
+    that cannot say what it changed is just a silent overwrite."""
+    vintage = {}
+    slugs = [slug for _, slug, _ in WDI_INDICATORS] + [IMF_INDICATOR[1]]
+    for slug in slugs:
+        for _, _, country_slug in COUNTRIES:
+            path = os.path.join(data_dir, country_slug, f"{slug}.json")
+            if not os.path.exists(path):
+                continue
+            try:
+                with open(path, encoding="utf-8") as f:
+                    rows = json.load(f)
+            except (OSError, ValueError):
+                continue
+            for row in rows:
+                vintage[(slug, country_slug, row["year"])] = row["value"]
+    return vintage
+
+
+def summarize_revisions(previous, current):
+    """What moved between two vintages: how many observations changed, and the
+    largest change in absolute terms. A year that gained its first observation
+    counts as changed (coverage filling in) but not as a value revision."""
+    changed = 0
+    largest = None
+    for key, value in current.items():
+        if key not in previous:
+            continue  # a brand new year or series is coverage, not a revision
+        old = previous[key]
+        if old == value:
+            continue
+        changed += 1
+        if isinstance(old, (int, float)) and isinstance(value, (int, float)):
+            delta = abs(value - old)
+            if largest is None or delta > largest["absChange"]:
+                largest = {
+                    "series": key[0],
+                    "country": key[1],
+                    "year": key[2],
+                    "from": old,
+                    "to": value,
+                    "absChange": round(delta, 2),
+                }
+    return {"changed": changed, "compared": len(current), "largest": largest}
+
+
+def _selftest():
+    """python pull.py --selftest: the revision summary on a synthetic vintage."""
+    previous = {
+        ("gdp-growth", "pakistan", 2024): 3.1,
+        ("gdp-growth", "pakistan", 2025): 3.5,
+        ("gdp-growth", "nepal", 2019): None,
+        ("gdp-growth", "nepal", 2024): None,
+    }
+    current = {
+        ("gdp-growth", "pakistan", 2024): 3.1,  # unchanged
+        ("gdp-growth", "pakistan", 2025): 2.9,  # revised down 0.6
+        ("gdp-growth", "india", 2025): 6.5,  # new coverage, not a revision
+        ("gdp-growth", "nepal", 2019): None,  # still null
+        ("gdp-growth", "nepal", 2024): 4.1,  # filled in: changed, not numeric
+    }
+    s = summarize_revisions(previous, current)
+    assert s["compared"] == 5, s
+    assert s["changed"] == 2, s
+    assert s["largest"]["country"] == "pakistan" and s["largest"]["year"] == 2025, s
+    assert s["largest"]["absChange"] == 0.6 and s["largest"]["from"] == 3.5, s
+    assert summarize_revisions({}, {}) == {"changed": 0, "compared": 0, "largest": None}
+    assert summarize_revisions({("x", "y", 1): 5}, {("x", "y", 1): 5})["changed"] == 0
+    print("selftest ok")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
+    previous = load_vintage(DATA_DIR)
     sources = {}
     wdi_lastupdated = set()
 
@@ -270,6 +346,10 @@ def main():
         "generatedAt": date.today().isoformat(),
         "lastUpdated": max(wdi_lastupdated) if wdi_lastupdated else None,
         "sources": dict(sorted(sources.items())),
+        # What this refresh changed relative to what was on disk, so the site can
+        # say "three observations moved, the largest was X" instead of quietly
+        # rewriting history.
+        "revisions": summarize_revisions(previous, load_vintage(DATA_DIR)),
     }
     meta_path = os.path.join(DATA_DIR, "meta.json")
     with open(meta_path, "w", encoding="utf-8") as f:
@@ -278,4 +358,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if "--selftest" in sys.argv:
+        _selftest()
+    else:
+        main()

@@ -1,6 +1,7 @@
-import { ALL_COUNTRIES } from "@/lib/countries";
-import { INDICATORS } from "@/lib/indicators";
+import { ALL_COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
+import { INDICATOR_MAP, INDICATORS } from "@/lib/indicators";
 import { coverageSpan, loadMeta, loadSeries } from "@/lib/loaders";
+import type { CountrySlug } from "@/lib/types";
 
 export const metadata = {
   title: "Methodology & sources",
@@ -23,6 +24,33 @@ export default function MethodologyPage() {
     const latest = Math.max(0, ...cells.map((x) => x.span?.last ?? 0));
     return { ind, cells, latest };
   });
+
+  // The pipeline compares each refresh with the vintage on disk, so the site can
+  // say what moved instead of only warning that things move. Absent on an old
+  // meta.json, which is why it is read defensively and rendered only if present.
+  const refreshedOn =
+    typeof meta?.generatedAt === "string" ? meta.generatedAt : updated;
+  const rev = (meta?.revisions ?? null) as {
+    changed: number;
+    compared: number;
+    largest: {
+      series: string;
+      country: string;
+      year: number;
+      from: number;
+      to: number;
+    } | null;
+  } | null;
+  const revisionNote =
+    rev && typeof rev.changed === "number" && typeof rev.compared === "number"
+      ? rev.changed === 0
+        ? `The refresh of ${refreshedOn} re-derived ${rev.compared.toLocaleString("en-US")} observations and revised none of them.`
+        : `The refresh of ${refreshedOn} re-derived ${rev.compared.toLocaleString("en-US")} observations and revised ${rev.changed}${
+            rev.largest
+              ? `, the largest being ${COUNTRY_MAP[rev.largest.country as CountrySlug]?.name ?? rev.largest.country} ${INDICATOR_MAP[rev.largest.series]?.title ?? rev.largest.series} in ${rev.largest.year}, from ${rev.largest.from} to ${rev.largest.to}`
+              : ""
+          }.`
+      : null;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pb-20 pt-12">
@@ -164,6 +192,7 @@ export default function MethodologyPage() {
           revise historical values as methodologies and national accounts change
           (base-year shifts, rebasing). The site is refreshed from the live APIs,
           so snapshots differ slightly from earlier vintages.
+          {revisionNote && <> {revisionNote}</>}
         </li>
         <li>
           <strong className="text-[#E8E8ED]">Coverage gaps.</strong> Some series
