@@ -1,5 +1,7 @@
-import { INDICATORS } from "@/lib/indicators";
-import { loadMeta } from "@/lib/loaders";
+import { ALL_COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
+import { INDICATOR_MAP, INDICATORS } from "@/lib/indicators";
+import { coverageSpan, loadMeta, loadSeries } from "@/lib/loaders";
+import type { CountrySlug } from "@/lib/types";
 
 export const metadata = {
   title: "Methodology & sources",
@@ -11,6 +13,44 @@ export default function MethodologyPage() {
   const meta = loadMeta();
   const updated =
     typeof meta?.lastUpdated === "string" ? meta.lastUpdated : "n/a";
+
+  // Read straight off the shipped files, so this table cannot claim more coverage
+  // than the data has.
+  const coverage = INDICATORS.map((ind) => {
+    const cells = ALL_COUNTRIES.map((c) => ({
+      c,
+      span: coverageSpan(loadSeries(c.slug, ind.slug)),
+    }));
+    const latest = Math.max(0, ...cells.map((x) => x.span?.last ?? 0));
+    return { ind, cells, latest };
+  });
+
+  // The pipeline compares each refresh with the vintage on disk, so the site can
+  // say what moved instead of only warning that things move. Absent on an old
+  // meta.json, which is why it is read defensively and rendered only if present.
+  const refreshedOn =
+    typeof meta?.generatedAt === "string" ? meta.generatedAt : updated;
+  const rev = (meta?.revisions ?? null) as {
+    changed: number;
+    compared: number;
+    largest: {
+      series: string;
+      country: string;
+      year: number;
+      from: number;
+      to: number;
+    } | null;
+  } | null;
+  const revisionNote =
+    rev && typeof rev.changed === "number" && typeof rev.compared === "number"
+      ? rev.changed === 0
+        ? `The refresh of ${refreshedOn} re-derived ${rev.compared.toLocaleString("en-US")} observations and revised none of them.`
+        : `The refresh of ${refreshedOn} re-derived ${rev.compared.toLocaleString("en-US")} observations and revised ${rev.changed}${
+            rev.largest
+              ? `, the largest being ${COUNTRY_MAP[rev.largest.country as CountrySlug]?.name ?? rev.largest.country} ${INDICATOR_MAP[rev.largest.series]?.title ?? rev.largest.series} in ${rev.largest.year}, from ${rev.largest.from} to ${rev.largest.to}`
+              : ""
+          }.`
+      : null;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pb-20 pt-12">
@@ -73,6 +113,44 @@ export default function MethodologyPage() {
       </div>
 
       <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
+        What the data covers
+      </h2>
+      <p className="mt-3 text-xs leading-relaxed text-[#8A8A94]">
+        The first and last year each series actually has an observation for, by
+        country. An asterisk marks a series that stops earlier here than it does
+        for the best-covered country in that row; interior gaps are shown on the
+        charts and never interpolated. Two-letter codes match the header.
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full border-collapse text-xs">
+          <thead>
+            <tr className="border-b border-[#2A2A32] text-left text-[11px] uppercase tracking-wider text-[#8A8A94]">
+              <th className="py-2 pr-3 font-semibold">Series</th>
+              {ALL_COUNTRIES.map((c) => (
+                <th key={c.slug} className="py-2 pr-3 font-semibold">
+                  {c.short}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {coverage.map(({ ind, cells, latest }) => (
+              <tr key={ind.slug} className="border-b border-[#1A1A20] text-[#A0A0A8]">
+                <td className="py-2 pr-3 font-medium text-[#E8E8ED]">{ind.title}</td>
+                {cells.map(({ c, span }) => (
+                  <td key={c.slug} className="py-2 pr-3 font-mono">
+                    {span
+                      ? `${span.first}-${span.last}${span.last < latest ? "*" : ""}`
+                      : "none"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 className="mt-10 border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
         Reading the charts
       </h2>
       <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-[#A0A0A8]">
@@ -114,6 +192,7 @@ export default function MethodologyPage() {
           revise historical values as methodologies and national accounts change
           (base-year shifts, rebasing). The site is refreshed from the live APIs,
           so snapshots differ slightly from earlier vintages.
+          {revisionNote && <> {revisionNote}</>}
         </li>
         <li>
           <strong className="text-[#E8E8ED]">Coverage gaps.</strong> Some series

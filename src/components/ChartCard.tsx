@@ -1,4 +1,5 @@
 import type { IndicatorMeta, SeriesPoint } from "@/lib/types";
+import { lastConsecutiveWindow } from "@/lib/stats";
 import MacroChart from "./MacroChart";
 
 // The shipped series, as committed: the site promises every number is
@@ -25,6 +26,10 @@ export default function ChartCard({
   insightNote,
   height = 280,
 }: ChartCardProps) {
+  // Where this country's data stops: a chart whose last observation is 2019 or
+  // 2021 must not read as current just because the page was built today.
+  const coverage = lastConsecutiveWindow(seriesByCountry[active] ?? []);
+
   return (
     <div
       id={indicator.slug}
@@ -45,11 +50,13 @@ export default function ChartCard({
           indicator={indicator}
           showPeers={showPeers}
           height={height}
+          label={`${insightTitle ?? indicator.title}. ${insightNote ?? indicator.unit}`}
         />
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#1A1A20] pt-2 text-[11px] text-[#8A8A94]">
         <span>
           {indicator.source} · {indicator.code}
+          {coverage && ` · covers to ${coverage.lastYear}`}
         </span>
         <span className="flex items-center gap-3">
           <a

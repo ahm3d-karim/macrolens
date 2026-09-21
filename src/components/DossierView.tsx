@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { CountryMeta, SeriesPoint } from "@/lib/types";
-import { INDICATOR_MAP } from "@/lib/indicators";
+import { INDICATOR_MAP, INDICATOR_SECTIONS } from "@/lib/indicators";
 import CountryToggle from "./CountryToggle";
 import StatCard from "./StatCard";
 import ChartCard from "./ChartCard";
@@ -23,33 +23,6 @@ interface DossierViewProps {
   seriesByIndicator: Record<string, Record<string, SeriesPoint[]>>;
   updated: string;
 }
-
-const SECTIONS: { title: string; rows: string[][] }[] = [
-  {
-    title: "Growth & Output",
-    rows: [["gdp-growth"], ["gdp-per-capita"]],
-  },
-  {
-    title: "Prices & Money",
-    rows: [["inflation", "broad-money"]],
-  },
-  {
-    title: "Structure & jobs",
-    rows: [["agriculture", "manufacturing"], ["unemployment", "female-labor-participation"]],
-  },
-  {
-    title: "Investment & Debt",
-    rows: [["gross-capital-formation", "gross-savings"], ["fdi-inflows", "debt-service"], ["external-debt"]],
-  },
-  {
-    title: "External Sector",
-    rows: [["exports", "imports", "current-account"], ["reserves-months", "remittances"]],
-  },
-  {
-    title: "Fiscal & money",
-    rows: [["fiscal-balance", "public-debt"], ["exchange-rate", "real-interest-rate"]],
-  },
-];
 
 const STAT_STRIP = ["gdp-growth", "inflation", "gdp-per-capita", "reserves-months", "remittances"];
 
@@ -115,7 +88,7 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
       </div>
 
       {/* Sections */}
-      {SECTIONS.map((section) => (
+      {INDICATOR_SECTIONS.map((section) => (
         <section key={section.title} className="mt-10">
           <h2 className="border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
             {section.title}

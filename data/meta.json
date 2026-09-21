@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20",
+  "generatedAt": "2026-09-21",
   "lastUpdated": "2026-07-13",
   "sources": {
     "agriculture": {
@@ -117,5 +117,10 @@
       "code": "SL.UEM.TOTL.ZS",
       "url": "https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS"
     }
+  },
+  "revisions": {
+    "changed": 0,
+    "compared": 10367,
+    "largest": null
   }
 }

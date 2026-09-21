@@ -20,6 +20,8 @@ interface MacroChartProps {
   showPeers: boolean;
   height?: number;
   variant?: "dossier" | "compare";
+  // What the chart says, for screen readers: the SVG itself carries no text.
+  label?: string;
 }
 
 function mergeYears(
@@ -49,6 +51,7 @@ export default function MacroChart({
   showPeers,
   height = 280,
   variant = "dossier",
+  label,
 }: MacroChartProps) {
   const data = mergeYears(seriesByCountry);
   const activeMeta = COUNTRY_MAP[active];
@@ -56,7 +59,12 @@ export default function MacroChart({
   const tickFormatter = (v: number) => v.toString();
 
   return (
-    <div style={{ height }} className="w-full">
+    <div
+      style={{ height }}
+      className="w-full"
+      role="img"
+      aria-label={label ?? `${indicator.title}, ${indicator.unit}`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#1A1A20" strokeDasharray="3 3" vertical={false} />
