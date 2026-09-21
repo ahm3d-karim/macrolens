@@ -1,0 +1,42 @@
+name: Refresh data
+
+# The site is only as good as its vintage, and a vintage only moves when
+# someone remembers to run the pipeline. This runs it monthly and opens a PR
+# when the data actually moved: master is protected, so the refresh goes
+# through the same verify gate as every other change, and nothing ships
+# unreviewed. Trigger it by hand from the Actions tab to test the path.
+
+on:
+  schedule:
+    - cron: "17 5 1 * *" # 05:17 UTC on the 1st of each month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: pip install requests
+      - run: python pull.py
+      - name: Open a PR when the data moved
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data; then
+            echo "No data change this month; nothing to review."
+            exit 0
+          fi
+          git config user.name "Ahmad Karim"
+          git config user.email "28020258@lums.edu.pk"
+          git switch -c "data/refresh-$(date -u +%Y-%m-%d)"
+          git add data
+          git commit -m "data: refresh from World Bank WDI and IMF WEO"
+          git push -u origin HEAD
+          gh pr create --fill --base master
