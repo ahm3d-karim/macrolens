@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { COUNTRIES } from "../src/lib/countries";
+import { ALL_COUNTRIES } from "../src/lib/countries";
 import { INDICATORS } from "../src/lib/indicators";
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -17,7 +17,7 @@ function strictParse(file: string): unknown {
 
 describe("macrolens data files", () => {
   it("every country has every indicator file, strictly valid JSON, sorted years", () => {
-    for (const c of COUNTRIES) {
+    for (const c of ALL_COUNTRIES) {
       for (const ind of INDICATORS) {
         const file = path.join(DATA_DIR, c.slug, `${ind.slug}.json`);
         if (ind.optional && !fs.existsSync(file)) continue;
@@ -86,10 +86,12 @@ describe("macrolens data files", () => {
   const THIN_SERIES_OK = new Set([
     "pakistan:fiscal-balance", // WDI GC.* has no Pakistan observations
     "nepal:real-interest-rate", // WDI has no Nepal real-rate observations
+    "vietnam:fiscal-balance", // same GC.* hole, benchmark country
+    "vietnam:remittances", // WDI covers at most 5 Vietnam years
   ]);
 
   it("every file has a real history: >=20 rows and >=10 non-null values", () => {
-    for (const c of COUNTRIES) {
+    for (const c of ALL_COUNTRIES) {
       for (const ind of INDICATORS) {
         const file = path.join(DATA_DIR, c.slug, `${ind.slug}.json`);
         if (ind.optional && !fs.existsSync(file)) continue;

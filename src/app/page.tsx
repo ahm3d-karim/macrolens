@@ -21,8 +21,9 @@ export default function HomePage() {
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#A0A0A8]">
           Macroeconomic indicators for Pakistan, India, Bangladesh, Sri Lanka and
           Nepal, every series pulled straight from the original publisher (World
-          Bank WDI). Pick a country, read what the data actually says, and flip
-          between neighbours for context.
+          Bank WDI). Vietnam and Indonesia ride along as benchmarks. Pick a
+          country, read what the data actually says, and flip between neighbours
+          for context.
         </p>
         <p className="mt-3 text-xs text-[#8A8A94]">
           Data refreshed from WB WDI, last updated {updated}
@@ -86,9 +87,10 @@ export default function HomePage() {
             Compare, don&apos;t just stare
           </h3>
           <p className="mt-2 text-xs leading-relaxed text-[#A0A0A8]">
-            Every chart on every dossier can show all five countries at once.
-            Your country is drawn solid, the neighbours in grey, and that is
-            where the stories live: Bangladesh passing Pakistan, Sri Lanka&apos;s
+            Every chart on every dossier can show all five countries at once,
+            with Vietnam and Indonesia alongside in dashed grey for scale. Your
+            country is drawn solid, the neighbours in grey, and that is where
+            the stories live: Bangladesh passing Pakistan, Sri Lanka&apos;s
             reserves collapse, Nepal&apos;s remittance dependence.
           </p>
           <p className="mt-4 text-xs leading-relaxed text-[#8A8A94]">

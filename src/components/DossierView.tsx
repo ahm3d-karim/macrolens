@@ -90,7 +90,7 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
             onChange={(e) => setShowPeers(e.target.checked)}
             className="accent-[#52B788]"
           />
-          Show peers (all 5 countries)
+          Show peers (5 neighbours + 2 benchmarks)
         </label>
       </div>
 
@@ -158,7 +158,9 @@ export default function DossierView({ country, seriesByIndicator, updated }: Dos
           <Link href="/methodology" className="text-[#52B788] hover:text-[#6ED49C]">
             methodology page
           </Link>
-          . Peers are shown in grey for context; every series is independently sourced.
+          . Neighbours are drawn in grey, the Vietnam and Indonesia benchmarks in
+          dashed grey; every series is independently sourced. Headline findings
+          rank this country against its five South Asian neighbours only.
         </p>
       </footer>
     </div>

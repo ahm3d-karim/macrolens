@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     template: "%s · Macro Lens",
   },
   description:
-    "Five countries. Four decades. One honest look. Macro indicators for Pakistan, India, Bangladesh, Sri Lanka and Nepal, from primary sources: World Bank WDI.",
+    "Five countries. Four decades. One honest look. Macro indicators for Pakistan, India, Bangladesh, Sri Lanka and Nepal, plus Vietnam and Indonesia as Asian benchmarks, from primary sources: World Bank WDI.",
   openGraph: {
     type: "website",
     siteName: "Macro Lens",
     title: "Macro Lens: South Asia's macro economy, made comparable",
     description:
-      "South Asia macro indicators from primary sources (World Bank WDI). Five countries, four decades, findings computed from the data at build time.",
+      "South Asia macro indicators from primary sources (World Bank WDI). Five countries plus two benchmarks, four decades, findings computed from the data at build time.",
     url: "/",
   },
 };

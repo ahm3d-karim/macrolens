@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
+import { ALL_COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
 import type { CountrySlug, IndicatorMeta, SeriesPoint } from "@/lib/types";
 import { axisFormat, formatValue } from "@/lib/format";
 
@@ -91,7 +91,7 @@ export default function MacroChart({
             }) as never}
           />
           {variant === "compare" ? (
-            COUNTRIES.filter(
+            ALL_COUNTRIES.filter(
               (c) => (seriesByCountry[c.slug] ?? []).length > 0,
             ).map((c) => (
               <Line
@@ -108,14 +108,15 @@ export default function MacroChart({
           ) : (
             <>
               {showPeers &&
-                COUNTRIES.filter((c) => c.slug !== active).map((c) => (
+                ALL_COUNTRIES.filter((c) => c.slug !== active).map((c) => (
                   <Line
                     key={c.slug}
                     type="monotone"
                     dataKey={c.slug}
                     stroke={c.color}
                     strokeWidth={1.2}
-                    strokeOpacity={0.35}
+                    strokeOpacity={c.benchmark ? 0.22 : 0.35}
+                    strokeDasharray={c.benchmark ? "4 4" : undefined}
                     dot={false}
                     connectNulls={false}
                     isAnimationActive={false}

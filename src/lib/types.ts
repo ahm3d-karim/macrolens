@@ -3,7 +3,9 @@ export type CountrySlug =
   | "india"
   | "bangladesh"
   | "sri-lanka"
-  | "nepal";
+  | "nepal"
+  | "vietnam"
+  | "indonesia";
 
 export interface CountryMeta {
   slug: CountrySlug;
@@ -14,6 +16,9 @@ export interface CountryMeta {
   flag: string;
   color: string;
   blurb: string;
+  // Drawn in charts and selectable in the compare table, but kept out of the
+  // regional rankings and peer ranges: a benchmark is context, not a neighbour.
+  benchmark?: boolean;
 }
 
 export interface SeriesPoint {

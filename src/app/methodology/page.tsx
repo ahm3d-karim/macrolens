@@ -76,8 +76,16 @@ export default function MethodologyPage() {
         <li>
           <strong className="text-[#E8E8ED]">The solid line</strong> is the
           country you opened. When &quot;show peers&quot; is on, the other four
-          countries appear in grey for context, same source, same unit, same
-          scale.
+          South Asian countries appear in grey, and Vietnam and Indonesia, kept
+          as benchmarks, in dashed grey, all from the same publishers, same
+          units, same scale.
+        </li>
+        <li>
+          <strong className="text-[#E8E8ED]">Benchmarks stay out of the
+          verdicts.</strong> The generated findings rank a country against its
+          five South Asian neighbours only. Vietnam and Indonesia are there to
+          read the scale of a number, never counted as neighbours in the prose
+          or in the regional ranges.
         </li>
         <li>
           Level series (GDP per capita, reserves) use a linear axis; percent

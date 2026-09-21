@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Macrolens data pipeline: World Bank WDI (22 indicators) + IMF WEO public debt
-(best-effort, optional) for 5 South Asian countries -> normalized per-country
+(best-effort, optional) for 5 South Asian countries plus 2 benchmark countries
+(Vietnam, Indonesia) -> normalized per-country
 per-indicator JSON files.
 
 Outputs:
@@ -36,6 +37,10 @@ COUNTRIES = [
     ("BD", "BGD", "bangladesh"),
     ("LK", "LKA", "sri-lanka"),
     ("NP", "NPL", "nepal"),
+    # Benchmarks: same publishers, same units, kept out of the regional
+    # rankings on the site (see src/lib/countries.ts).
+    ("VN", "VNM", "vietnam"),
+    ("ID", "IDN", "indonesia"),
 ]
 
 WDI_INDICATORS = [
