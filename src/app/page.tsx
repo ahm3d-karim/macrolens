@@ -1,7 +1,24 @@
-import { COUNTRIES } from "@/lib/countries";
-import { latestValue, loadSeries, loadMeta } from "@/lib/loaders";
+import { COUNTRIES, COUNTRY_MAP } from "@/lib/countries";
+import { INDICATOR_MAP } from "@/lib/indicators";
+import { loadAllCountriesSeries, latestValue, loadSeries, loadMeta } from "@/lib/loaders";
+import { buildCompareRows, gapLeaderLaggard } from "@/lib/compare";
 import { formatValue } from "@/lib/format";
+import type { CountrySlug, IndicatorKind } from "@/lib/types";
 import Link from "next/link";
+
+// A four-line regional snapshot, computed from the shipped series with the
+// same helpers the compare page uses: no hand-typed numbers, and the region
+// means the five South Asian countries, benchmarks excluded.
+const SNAPSHOT = ["gdp-growth", "inflation", "gdp-per-capita", "reserves-months"];
+const REGION = COUNTRIES.map((c) => c.slug);
+
+// A gap between two countries reads as percentage points for percent series
+// and as a multiple for level series (income, reserves in months).
+function spreadText(kind: IndicatorKind, gap: number, ratio: number | null): string {
+  if (kind === "pct") return `${gap.toFixed(1)} pp`;
+  if (ratio === null) return "n/a";
+  return `${ratio.toFixed(1)}x`;
+}
 
 export default function HomePage() {
   const meta = loadMeta();
@@ -28,6 +45,70 @@ export default function HomePage() {
         <p className="mt-3 text-xs text-[#8A8A94]">
           Data refreshed from WB WDI, last updated {updated}
         </p>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 pb-12">
+        <h2 className="border-b border-[#1A1A20] pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
+          Where the region stands
+        </h2>
+        <p className="mt-3 text-xs leading-relaxed text-[#8A8A94]">
+          The latest reading for each of the five, ranked against each other.
+          Latest years differ where coverage ends earlier, and every number
+          comes from the same series the dossiers plot, so a refresh rewrites
+          this table too. Benchmarks are excluded, as everywhere on this site.
+        </p>
+        <div className="mt-4 overflow-x-auto rounded-xl border border-[#1A1A20] bg-[#111115]">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-[#2A2A32] text-left text-[11px] uppercase tracking-wider text-[#8A8A94]">
+                <th className="px-4 py-3 font-semibold">Indicator</th>
+                <th className="px-4 py-3 font-semibold">Highest</th>
+                <th className="px-4 py-3 font-semibold">Lowest</th>
+                <th className="px-4 py-3 font-semibold">Spread</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SNAPSHOT.map((slug) => {
+                const ind = INDICATOR_MAP[slug];
+                const gap = gapLeaderLaggard(
+                  buildCompareRows(loadAllCountriesSeries(slug), REGION),
+                );
+                if (!gap) return null;
+                const hi = COUNTRY_MAP[gap.leaderSlug as CountrySlug];
+                const lo = COUNTRY_MAP[gap.laggardSlug as CountrySlug];
+                return (
+                  <tr key={slug} className="border-b border-[#1A1A20] last:border-0">
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/compare?indicator=${slug}`}
+                        className="font-medium text-[#E8E8ED] hover:text-[#6ED49C]"
+                      >
+                        {ind.title}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-[#A0A0A8]">
+                      <span className="mr-1.5">{hi.flag}</span>
+                      {hi.name}{" "}
+                      <span className="font-mono text-[#E8E8ED]">
+                        {formatValue(gap.leaderValue, ind.kind, ind.decimals)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[#A0A0A8]">
+                      <span className="mr-1.5">{lo.flag}</span>
+                      {lo.name}{" "}
+                      <span className="font-mono text-[#E8E8ED]">
+                        {formatValue(gap.laggardValue, ind.kind, ind.decimals)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-[#A0A0A8]">
+                      {spreadText(ind.kind, gap.gap, gap.ratio)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section className="mx-auto grid w-full max-w-6xl gap-4 px-4 pb-20 sm:grid-cols-2 lg:grid-cols-3">
