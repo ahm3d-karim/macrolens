@@ -237,3 +237,36 @@ export const INDICATORS: IndicatorMeta[] = [
 export const INDICATOR_MAP: Record<string, IndicatorMeta> = Object.fromEntries(
   INDICATORS.map((i) => [i.slug, i]),
 );
+
+// How the dossiers group the series, and how the compare pills are grouped, in
+// reading order. One list, so a section cannot drift between the two pages.
+export const INDICATOR_SECTIONS: { title: string; rows: string[][] }[] = [
+  {
+    title: "Growth & Output",
+    rows: [["gdp-growth"], ["gdp-per-capita"]],
+  },
+  {
+    title: "Prices & Money",
+    rows: [["inflation", "broad-money"]],
+  },
+  {
+    title: "Structure & jobs",
+    rows: [["agriculture", "manufacturing"], ["unemployment", "female-labor-participation"]],
+  },
+  {
+    title: "Investment & Debt",
+    rows: [["gross-capital-formation", "gross-savings"], ["fdi-inflows", "debt-service"], ["external-debt"]],
+  },
+  {
+    title: "External Sector",
+    rows: [["exports", "imports", "current-account"], ["reserves-months", "remittances"]],
+  },
+  {
+    title: "Fiscal & money",
+    rows: [["fiscal-balance", "public-debt"], ["exchange-rate", "real-interest-rate"]],
+  },
+];
+
+export const SECTION_BY_SLUG: Record<string, string> = Object.fromEntries(
+  INDICATOR_SECTIONS.flatMap((s) => s.rows.flat().map((slug) => [slug, s.title])),
+);
