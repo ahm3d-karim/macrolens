@@ -22,8 +22,8 @@ data/
     {indicator}.json    flat [{year, value}] arrays, null for missing years
   meta.json             generatedAt, lastUpdated, per-indicator sources
 src/
-  app/                  layout, home, [country]/ dossier + OG image, compare, methodology
-  components/           CountryToggle, StatCard, ChartCard, MacroChart, DossierView
+  app/                  layout, home, [country]/ dossier + OG image, region, compare, methodology
+  components/           CountryToggle, StatCard, ChartCard, MacroChart, RegionTable, DossierView
   lib/                  countries, indicators, loaders, stats, insights, format, types
 pull.py                 (repo root · copied from macrolens-data) data pipeline
 ```
