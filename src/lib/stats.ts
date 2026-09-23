@@ -34,6 +34,21 @@ export function lastConsecutiveWindow(series: SeriesPoint[]): Window | null {
   return { firstYear: points[0].year, lastYear: points[points.length - 1].year, points };
 }
 
+// Observations split into runs of consecutive years. A chart drawn from these
+// breaks at a missing year instead of bridging it: a sparkline makes the same
+// promise as the big line charts, and index-spaced points would hide the hole.
+export function consecutiveRuns(
+  points: { year: number; value: number }[],
+): { year: number; value: number }[][] {
+  const runs: { year: number; value: number }[][] = [];
+  for (const p of points) {
+    const run = runs[runs.length - 1];
+    if (run && p.year === run[run.length - 1].year + 1) run.push(p);
+    else runs.push([p]);
+  }
+  return runs;
+}
+
 // Value exactly at `year` (null when missing), plus the nearest observation
 // within `tolerance` years on either side (data ends mid-decade on some series).
 export function valueInYear(
