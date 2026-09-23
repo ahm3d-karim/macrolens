@@ -45,9 +45,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 South Asia
               </span>
             </Link>
-            <nav className="flex items-center gap-5 text-sm text-[#A0A0A8]">
+            {/* Four items now: tighter on phones so the logo and the nav still
+                share one row without wrapping. */}
+            <nav className="flex items-center gap-3 text-xs text-[#A0A0A8] sm:gap-5 sm:text-sm">
               <Link href="/" className="transition-colors hover:text-[#E8E8ED]">
                 Countries
+              </Link>
+              <Link href="/region" className="transition-colors hover:text-[#E8E8ED]">
+                Region
               </Link>
               <Link href="/compare" className="transition-colors hover:text-[#E8E8ED]">
                 Compare
