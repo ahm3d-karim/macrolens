@@ -35,7 +35,12 @@ export default function ChartCard({
       id={indicator.slug}
       className="flex scroll-mt-24 flex-col rounded-xl border border-[#1A1A20] bg-[#111115] p-5"
     >
-      <h3 className="text-base font-semibold leading-snug text-[#E8E8ED]">
+      {/* The finding is the headline, so the series behind it needs its own
+          label: which indicator, in which unit, every chart. */}
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#8A8A94]">
+        {indicator.title} · {indicator.unit}
+      </p>
+      <h3 className="mt-1 text-base font-semibold leading-snug text-[#E8E8ED]">
         {insightTitle ?? indicator.title}
       </h3>
       {insightNote ? (
