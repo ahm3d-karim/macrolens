@@ -768,7 +768,9 @@ const exportBlocks: Block[] = [
     if (!base) return null;
     const latest = latestOf(ctx.w);
     const pct = ((latest.value - base.value) / Math.abs(base.value)) * 100;
-    if (Math.abs(pct) >= 25 || latest.year - base.year < 15) return null;
+    // 10 years, not 15: Sri Lanka's clean window restarts in 2015 after the
+    // pre-2015 gaps, and 2015-2025 is a flat decade at 19.9 to 19.0 of GDP.
+    if (Math.abs(pct) >= 25 || latest.year - base.year < 10) return null;
     const rank = rankByLatest(ctx);
     return {
       title: `Stuck at ${fmt(ctx, latest.value)} of GDP for ${latest.year - base.year} years`,
@@ -865,6 +867,35 @@ const importBlocks: Block[] = [
         : `Latest observation ${latest.year}.`,
     };
   },
+  // The 15 to 30 band, where neither compression nor heavy dependence fires:
+  // what the import bill runs against exports at the same year. India sits at
+  // 24.0 against 22.3 (trade close to level in share terms), Bangladesh at 16.8
+  // against 11.1. Above 3x the dependence block has already spoken.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const expW = crossWindow(ctx, "exports", ctx.c.slug);
+    const expLatest = expW ? latestOf(expW) : null;
+    if (!expLatest || expLatest.value <= 0) return null;
+    const ratio = latest.value / expLatest.value;
+    if (ratio > 3) return null;
+    if (ratio <= 1.15) {
+      const years =
+        latest.year === expLatest.year ? `${latest.year}` : `${latest.year} and ${expLatest.year}`;
+      return {
+        title: `Trade close to level: imports ${fmt(ctx, latest.value)}, exports ${fmt(ctx, expLatest.value)}`,
+        note:
+          `The import bill is ${fmt(ctx, latest.value)} of GDP against exports of ${fmt(ctx, expLatest.value)}` +
+          ` (${years}): a gap of ${pts(latest.value - expLatest.value)}.`,
+      };
+    }
+    return {
+      title: `Imports run ${ratio.toFixed(1)}x exports: ${fmt(ctx, latest.value)} of GDP`,
+      note:
+        `The import bill is ${fmt(ctx, latest.value)} of GDP against exports of ${fmt(ctx, expLatest.value)},` +
+        ` so the trade shares sit ${ratio.toFixed(1)}x apart (${latest.year}).`,
+    };
+  },
 ];
 
 // --- current account -----------------------------------------------------------
@@ -897,11 +928,14 @@ const currentAccountBlocks: Block[] = [
         : `Latest observation ${latest.year}.`,
     };
   },
-  // Deficit.
+  // Deficit. The line sits at -0.25, the near-balance edge, so the band between
+  // -0.25 and -0.5 (India at -0.4 of GDP) is a deficit like any other instead
+  // of falling through to the generic summary. Before this the block was
+  // unreachable: no shipped reading sat at or below -0.5.
   (ctx) => {
     if (!need(ctx, 10)) return null;
     const latest = latestOf(ctx.w);
-    if (latest.value >= -0.5) return null;
+    if (latest.value >= -0.25) return null;
     const min = minIn(ctx.w);
     const range = peersRange(ctx);
     return {
@@ -1083,7 +1117,16 @@ const exchangeRateBlocks: Block[] = [
         note: `Official rate ${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), within ${pct.toFixed(1)}% over ten years. Annual averages.`,
       };
     }
-    return null; // middling drift: the generic fallback speaks
+    // The 10 to 50% band: a decade of steady erosion rather than a step change.
+    // India at 64.2 to 87.2 and Nepal at 102.4 to 139.1 sit here; Pakistan
+    // (102.8 to 281.1) and Bangladesh (78.0 to 121.9) are above it and keep the
+    // stronger headline.
+    return {
+      title: `A slow slide: ${fmt(ctx, ago10.value)} to ${fmt(ctx, latest.value)} per dollar`,
+      note:
+        `Official rate ${fmt(ctx, ago10.value)} (${ago10.year}) to ${fmt(ctx, latest.value)} (${latest.year}), ${signedPct(pct)} over ten years: ` +
+        `steady erosion rather than a step change. Annual averages, not spot rates.`,
+    };
   },
 ];
 
@@ -1105,7 +1148,16 @@ const realInterestRateBlocks: Block[] = [
         note: `The real interest rate sits at ${fmt(ctx, latest.value)} (${latest.year}): lending rates are running below inflation.`,
       };
     }
-    return null;
+    // Small positive real rate: 0 to 5%. Bangladesh at 2.0 sits here, with the
+    // window averaging well above it, so the story is a thin real return rather
+    // than the silence of the generic summary.
+    const mean = trailingMean(ctx.w, ctx.w.points.length);
+    return {
+      title: `A thin real return: ${fmt(ctx, latest.value)}`,
+      note:
+        `The real interest rate (lending rate minus inflation) is ${fmt(ctx, latest.value)} in ${latest.year}` +
+        (mean ? `, against a window average of ${fmt(ctx, mean.mean)} (${mean.fromYear} to ${mean.toYear}).` : "."),
+    };
   },
 ];
 
@@ -1248,6 +1300,24 @@ const fdiBlocks: Block[] = [
         (max && max.year !== latest.year
           ? `, well below the window peak of ${fmt(ctx, max.value)} (${max.year}).`
           : "."),
+    };
+  },
+  // The 0.6 to 1.5 band: real inflows, but off their peak. India sits at 1.0
+  // against 2.4 in 2020, Sri Lanka at 0.8 against 1.7 in 2018. A decade-wide
+  // peak, not the whole window: citing 1997 makes a 2024 reading look like a
+  // three decade collapse. Placed after the flight block, so the thinner
+  // countries keep that headline.
+  (ctx) => {
+    if (!need(ctx, 10)) return null;
+    const latest = latestOf(ctx.w);
+    const max = maxIn(ctx.w, ctx.w.lastYear - 9);
+    if (!max || max.year === latest.year || max.value - latest.value < 0.5) return null;
+    const rank = rankByLatest(ctx);
+    return {
+      title: `Foreign capital thinned: ${fmt(ctx, latest.value)} of GDP against ${fmt(ctx, max.value)} in ${max.year}`,
+      note:
+        `Net inflows are ${fmt(ctx, latest.value)} of GDP (${latest.year}), down from a past-decade peak of ${fmt(ctx, max.value)} in ${max.year}` +
+        (rank ? `, ranked ${rank.rank} of ${rank.of} in the region.` : "."),
     };
   },
 ];

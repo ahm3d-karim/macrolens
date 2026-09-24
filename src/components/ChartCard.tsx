@@ -30,6 +30,24 @@ export default function ChartCard({
   // 2021 must not read as current just because the page was built today.
   const coverage = lastConsecutiveWindow(seriesByCountry[active] ?? []);
 
+  // A series can hold no observations for a country at all (WDI publishes no
+  // Pakistan fiscal balance), or no clean run of years at the end (India's
+  // fiscal series ends in a single 2022 point after a four year hole). Both
+  // leave the finding slot empty, so the card says which one it is rather than
+  // printing the unit next to a chart the country barely appears in.
+  const observed = (seriesByCountry[active] ?? []).filter(
+    (p) => p.value !== null && p.value !== undefined,
+  );
+  const own = observed.length;
+  const lastOwn = own ? observed[own - 1].year : null;
+  const thinNote =
+    own === 0
+      ? "No WDI observations for this country in this series: the lines drawn are its neighbours."
+      : !coverage || coverage.points.length < 6
+        ? `No clean run of years at the end of this series (${own} observations, latest ${lastOwn}), so there is no headline to compute: the chart plots the years that exist, gaps included.`
+        : null;
+  const note = insightNote ?? thinNote ?? indicator.unit;
+
   return (
     <div
       id={indicator.slug}
@@ -43,11 +61,7 @@ export default function ChartCard({
       <h3 className="mt-1 text-base font-semibold leading-snug text-[#E8E8ED]">
         {insightTitle ?? indicator.title}
       </h3>
-      {insightNote ? (
-        <p className="mt-1 text-sm leading-relaxed text-[#A0A0A8]">{insightNote}</p>
-      ) : (
-        <p className="mt-1 text-sm text-[#8A8A94]">{indicator.unit}</p>
-      )}
+      <p className="mt-1 text-sm leading-relaxed text-[#A0A0A8]">{note}</p>
       <div className="mt-3 flex-1">
         <MacroChart
           seriesByCountry={seriesByCountry}
@@ -55,7 +69,7 @@ export default function ChartCard({
           indicator={indicator}
           showPeers={showPeers}
           height={height}
-          label={`${insightTitle ?? indicator.title}. ${insightNote ?? indicator.unit}`}
+          label={`${insightTitle ?? indicator.title}. ${note}`}
         />
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#1A1A20] pt-2 text-[11px] text-[#8A8A94]">
