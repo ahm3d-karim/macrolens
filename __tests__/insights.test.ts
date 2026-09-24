@@ -278,14 +278,47 @@ describe("computed findings", () => {
       expect(retreating!.title).toContain("Debt retreating");
     });
 
-    it("exchange rate: depreciation and peg fire; middling drift falls through to generic", () => {
+    it("exchange rate: the four decade bands fire distinctly", () => {
       const lost = getFacts("pakistan", "exchange-rate", lookup(full(mk(2010, 2025, 85, 280))));
       expect(lost!.title).toContain("lost ground");
       const peg = getFacts("nepal", "exchange-rate", lookup(full(mk(2010, 2025, 119.9, 120.2))));
       expect(peg!.title).toContain("Pinned to the dollar");
-      const drift = getFacts("india", "exchange-rate", lookup(full(mk(2010, 2025, 45, 58))));
+      const stable = getFacts("india", "exchange-rate", lookup(full(mk(2010, 2025, 60, 63))));
+      expect(stable!.title).toContain("Stable against the dollar");
+      // The middle band used to fall through to the generic summary; India
+      // (64.2 to 87.2) and Nepal (102.4 to 139.1) live here.
+      const drift = getFacts("india", "exchange-rate", lookup(full(mk(2010, 2025, 45, 62))));
+      expect(drift!.title).toContain("A slow slide");
       expect(drift!.title).not.toContain("lost ground");
-      expect(drift!.title).not.toContain("Pinned");
+    });
+
+    it("real interest rate: the thin positive band speaks instead of the generic summary", () => {
+      const thin = getFacts("bangladesh", "real-interest-rate", lookup(full(mk(2005, 2025, 3, 2))));
+      expect(thin!.title).toContain("A thin real return");
+    });
+
+    it("imports and FDI: the middling bands fire, not the generic summary", () => {
+      // Imports near the export share, and inflows below their peak but above
+      // the investor-flight line. The imports block reads the exports series
+      // across, so the lookup has to answer for both slugs.
+      const pair =
+        (imp: SeriesPoint[], exp: SeriesPoint[]): SeriesLookup =>
+        (slug) =>
+          full(slug === "exports" ? exp : imp);
+      const level = getFacts(
+        "india",
+        "imports",
+        pair(mk(2010, 2025, 20, 24), mk(2010, 2025, 19, 23)),
+      );
+      expect(level!.title).toContain("Trade close to level");
+      const wider = getFacts(
+        "bangladesh",
+        "imports",
+        pair(mk(2010, 2025, 15, 17), mk(2010, 2025, 12, 11)),
+      );
+      expect(wider!.title).toContain("Imports run");
+      const thinned = getFacts("india", "fdi-inflows", lookup(full(mk(2010, 2025, 2.4, 1.0))));
+      expect(thinned!.title).toContain("Foreign capital thinned");
     });
 
     it("real interest rate: negative and positive-real fire; empty series stays silent", () => {
