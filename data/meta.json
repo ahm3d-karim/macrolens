@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-21",
-  "lastUpdated": "2026-07-13",
+  "generatedAt": "2026-11-01",
+  "lastUpdated": "2026-10-08",
   "sources": {
     "agriculture": {
       "source": "World Bank WDI",
@@ -119,8 +119,15 @@
     }
   },
   "revisions": {
-    "changed": 0,
-    "compared": 10367,
-    "largest": null
+    "changed": 42,
+    "compared": 10368,
+    "largest": {
+      "series": "public-debt",
+      "country": "nepal",
+      "year": 2025,
+      "from": 48.1,
+      "to": 47.4,
+      "absChange": 0.7
+    }
   }
 }
